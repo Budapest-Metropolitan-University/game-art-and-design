@@ -1,0 +1,63 @@
+<!doctype html>
+<html lang="hu"><head><meta charset="utf-8"><meta name="viewport" content="width=device-width,initial-scale=1">
+<title>Szabadon használható asset-források – BME METU workshop 2026</title>
+<link rel="stylesheet" href="https://fonts.googleapis.com/css2?family=Rubik:wght@400..700&family=Nunito+Sans:wght@400..700&display=swap">
+<style>
+*{margin:0;padding:0;box-sizing:border-box}
+html,body{height:100%;background:#1E2430;overflow:hidden}
+#stage{position:absolute;left:50%;top:50%;width:1920px;height:1080px;transform-origin:center}
+h2,h3,p{margin:0}
+</style></head><body>
+<div id="stage">
+<section id="cover" style="position:relative;width:1920px;height:1080px;box-sizing:border-box;background:#F6F3EC;color:#1E2430;font-family:'Nunito Sans', Arial, sans-serif;padding:112px 128px 160px;display:flex;flex-direction:column;gap:48px">
+<div style="display:flex;flex-direction:column;gap:12px">
+<p style="font-size:26px;font-weight:700;color:#B4471A;text-transform:uppercase;letter-spacing:3px">Workshop · 2D / 2.5D / 3D</p>
+<h2 style="font-family:'Rubik', Arial, sans-serif;font-size:68px;font-weight:600;line-height:1.1">Szabadon használható asset-források</h2>
+</div>
+<div style="display:flex;gap:24px;align-items:stretch">
+<div style="flex:1;display:flex;flex-direction:column;gap:14px;background:#FFFDF8;padding:32px;border:1px solid #E2DCCD;border-radius:16px">
+<h3 style="font-family:'Rubik', Arial, sans-serif;font-size:40px;font-weight:600">Kenney</h3>
+<p style="font-size:24px;font-weight:700;background:#1E2430;color:#F6F3EC;padding:4px 14px;border-radius:999px;align-self:start">CC0</p>
+<p style="font-size:26px;line-height:1.35;color:#3D4554">2D sprite-ok, 3D modellek, UI, hangok egy stílusban. Animált karakterek. glTF is.</p>
+<div style="flex:1"></div>
+<p style="font-size:24px;font-weight:700;color:#B4471A">kenney.nl</p>
+</div>
+<div style="flex:1;display:flex;flex-direction:column;gap:14px;background:#FFFDF8;padding:32px;border:1px solid #E2DCCD;border-radius:16px">
+<h3 style="font-family:'Rubik', Arial, sans-serif;font-size:40px;font-weight:600">KayKit</h3>
+<p style="font-size:24px;font-weight:700;background:#1E2430;color:#F6F3EC;padding:4px 14px;border-radius:999px;align-self:start">CC0</p>
+<p style="font-size:26px;line-height:1.35;color:#3D4554">Low-poly karakterek és környezetek, glTF-ben. Külön ingyenes animációs csomag.</p>
+<div style="flex:1"></div>
+<p style="font-size:24px;font-weight:700;color:#B4471A">kaylousberg.com</p>
+</div>
+<div style="flex:1;display:flex;flex-direction:column;gap:14px;background:#FFFDF8;padding:32px;border:1px solid #E2DCCD;border-radius:16px">
+<h3 style="font-family:'Rubik', Arial, sans-serif;font-size:40px;font-weight:600">Quaternius</h3>
+<p style="font-size:24px;font-weight:700;background:#1E2430;color:#F6F3EC;padding:4px 14px;border-radius:999px;align-self:start">Szabad, kreditmentes</p>
+<p style="font-size:26px;line-height:1.35;color:#3D4554">50+ rigelt, animált karakter. FBX / Blend: GLB-be konvertálni kell.</p>
+<div style="flex:1"></div>
+<p style="font-size:24px;font-weight:700;color:#B4471A">quaternius.com</p>
+</div>
+<div style="flex:1;display:flex;flex-direction:column;gap:14px;background:#FFFDF8;padding:32px;border:1px solid #E2DCCD;border-radius:16px">
+<h3 style="font-family:'Rubik', Arial, sans-serif;font-size:40px;font-weight:600">Poly Pizza</h3>
+<p style="font-size:24px;font-weight:700;background:#E9E3D4;color:#1E2430;padding:4px 14px;border-radius:999px;align-self:start">CC0 vagy CC BY</p>
+<p style="font-size:26px;line-height:1.35;color:#3D4554">10 600+ low-poly modell kellékekhez. CC BY-nál a szerzőt fel kell tüntetni.</p>
+<div style="flex:1"></div>
+<p style="font-size:24px;font-weight:700;color:#B4471A">poly.pizza</p>
+</div>
+<div style="flex:1;display:flex;flex-direction:column;gap:14px;background:#EEE9DD;padding:32px;border:2px dashed #B9B09B;border-radius:16px">
+<h3 style="font-family:'Rubik', Arial, sans-serif;font-size:40px;font-weight:600;color:#3D4554">Mixamo</h3>
+<p style="font-size:24px;font-weight:700;background:#F6F3EC;color:#7A3A14;border:1px solid #B9B09B;padding:4px 14px;border-radius:999px;align-self:start">Óvatosan</p>
+<p style="font-size:26px;line-height:1.35;color:#3D4554">Adobe-fiók kell, FBX. Nyers fájl nyilvános repóba nem ajánlott.</p>
+<div style="flex:1"></div>
+<p style="font-size:24px;font-weight:700;color:#5A6272">mixamo.com</p>
+</div>
+</div>
+<p style="position:absolute;left:128px;right:128px;bottom:64px;font-size:26px;color:#1E2430"><b>Egy forrás, egy stílus.</b>   CC0 = közkincs: szabadon használható, módosítható és publikálható (GitHub Pages is).</p>
+
+</section>
+
+</div>
+<script>
+function fit(){var k=Math.min(innerWidth/1920,innerHeight/1080);document.getElementById('stage').style.transform='translate(-50%,-50%) scale('+k+')';}
+addEventListener('resize',fit);fit();
+</script>
+</body></html>
