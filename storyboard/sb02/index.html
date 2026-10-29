@@ -1,0 +1,855 @@
+<!doctype html>
+<html lang="hu">
+<head>
+<meta charset="utf-8">
+<meta name="viewport" content="width=device-width, initial-scale=1">
+<title>Thumbnailtől az animatikig</title>
+<link rel="preconnect" href="https://fonts.googleapis.com">
+<link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
+<link rel="stylesheet" href="https://fonts.googleapis.com/css2?family=Oswald:wght@400..700&family=Public+Sans:wght@400..800&family=Caveat:wght@500..700&display=swap">
+<style>
+  html, body { margin:0; height:100%; background:#141312; overflow:hidden; }
+  body { font-family:'Public Sans', Arial, sans-serif; color:#1E1D1B; }
+  #stage { position:absolute; left:50%; top:50%; width:1920px; height:1080px; transform-origin:0 0; }
+  #stage section { position:absolute; inset:0; width:1920px; height:1080px; box-sizing:border-box; overflow:hidden; }
+  #stage section:not(.on) { display:none !important; }
+  #stage * { margin:0; box-sizing:border-box; }
+  #stage h1 { font-size:96px; font-weight:600; line-height:1.1; }
+  #stage h2 { font-size:64px; font-weight:600; line-height:1.15; }
+  #stage h3 { font-size:44px; font-weight:600; line-height:1.2; }
+  #stage p { font-size:32px; line-height:1.4; }
+  #stage svg { flex:none; display:block; }
+  #stage .xi, #stage .xs { flex:none; }
+  #bar { position:fixed; right:16px; bottom:12px; display:flex; gap:8px; align-items:center;
+         font:600 14px 'Public Sans', Arial, sans-serif; color:#cfc8ba; opacity:.35; transition:opacity .2s; }
+  #bar:hover { opacity:1; }
+  #bar button { background:#2a2826; color:#f4f1ea; border:0; border-radius:6px; padding:8px 12px; font:inherit; cursor:pointer; }
+</style>
+</head>
+<body>
+<div id="stage">
+<section id="cover" data-transition="fade" style="background:#F4F1EA;color:#1E1D1B;font-family:'Public Sans', Arial, sans-serif;padding:128px;display:flex;flex-direction:row;align-items:center;gap:80px">
+<div style="flex:1;display:flex;flex-direction:column;gap:32px">
+<p style="font-size:26px;font-weight:700;letter-spacing:3px;text-transform:uppercase;color:#B0441A">Storyboard-alapok animációs filmhez</p>
+<h1 style="font-family:'Oswald', 'Arial Narrow', sans-serif;font-size:132px;font-weight:600;line-height:1.02;text-transform:uppercase">Thumbnailtől az animatikig</h1>
+<p style="font-size:44px;line-height:1.3;color:#55524C">A hatékony storyboard tervezése és kivitelezése</p>
+<p style="font-family:'Caveat', 'Brush Script MT', cursive;font-size:56px;font-weight:600;color:#B0441A">vázlat → board → animatik</p>
+</div>
+<svg aria-label="Négy vázlatos storyboard-panel: kettős beállítás, közeli arc, totál házzal és mozgásív" width="620" height="358" viewBox="0 0 620 358" xmlns="http://www.w3.org/2000/svg">
+<g fill="none" stroke="#1E1D1B" stroke-width="3" stroke-linecap="round" stroke-linejoin="round">
+<g transform="translate(0,0)">
+<rect x="2" y="2" width="296" height="165" fill="#FBF9F4" stroke-width="4"/>
+<path d="M10 122 H290" stroke="#A39E93" stroke-width="2"/>
+<circle cx="100" cy="60" r="16"/><path d="M100 76 V112 M100 112 L88 142 M100 112 L112 142 M100 88 L82 104 M100 88 L120 98"/>
+<circle cx="200" cy="60" r="16"/><path d="M200 76 V112 M200 112 L188 142 M200 112 L212 142 M200 88 L180 98 M200 88 L218 104"/>
+</g>
+<g transform="translate(320,0)">
+<rect x="2" y="2" width="296" height="165" fill="#FBF9F4" stroke-width="4"/>
+<circle cx="150" cy="92" r="58"/><ellipse cx="130" cy="80" rx="8" ry="11"/><ellipse cx="170" cy="80" rx="8" ry="11"/><path d="M126 116 Q150 134 174 116"/>
+</g>
+<g transform="translate(0,190)">
+<rect x="2" y="2" width="296" height="165" fill="#FBF9F4" stroke-width="4"/>
+<path d="M10 130 H290" stroke="#A39E93" stroke-width="2"/>
+<rect x="40" y="72" width="70" height="58"/><path d="M34 74 L75 42 L116 74"/>
+<circle cx="210" cy="96" r="9"/><path d="M210 105 V118 M210 118 L204 130 M210 118 L216 130"/>
+</g>
+<g transform="translate(320,190)">
+<rect x="2" y="2" width="296" height="165" fill="#FBF9F4" stroke-width="4"/>
+<path d="M40 132 Q150 20 250 96" stroke="#D2551E" stroke-dasharray="10 8"/>
+<circle cx="256" cy="100" r="12" fill="#D2551E" stroke="#D2551E"/>
+<circle cx="46" cy="110" r="10"/><path d="M46 120 V140 M46 132 L64 122"/>
+</g>
+</g>
+</svg>
+
+</section>
+<section id="utvonal" data-transition="fade" style="background:#F4F1EA;color:#1E1D1B;font-family:'Public Sans', Arial, sans-serif;padding:128px 128px 160px;display:flex;flex-direction:column;gap:64px">
+<div style="display:flex;flex-direction:column;gap:16px">
+<p style="font-size:26px;font-weight:700;letter-spacing:3px;text-transform:uppercase;color:#B0441A">Áttekintés</p>
+<h2 style="font-family:'Oswald', 'Arial Narrow', sans-serif;font-size:80px;font-weight:600;line-height:1.1">Az út a vázlattól a mozgóképig</h2>
+</div>
+<div style="display:flex;flex-direction:row;align-items:center;gap:32px">
+<div style="flex:1;background:#FBF9F4;border:3px solid #1E1D1B;border-radius:6px;padding:40px;display:flex;flex-direction:column;gap:16px">
+<p style="font-family:'Caveat', 'Brush Script MT', cursive;font-size:48px;font-weight:600;color:#B0441A;line-height:1">01</p>
+<h3 style="font-family:'Oswald', 'Arial Narrow', sans-serif;font-size:44px;font-weight:600">Thumbnail</h3>
+<p style="font-size:30px;line-height:1.4;color:#55524C">Gyors vizuális gyorsírás: ötletek, sorrend, beállítások.</p>
+</div>
+<svg class="xs" viewBox="0 0 100 50" preserveAspectRatio="none" style="width:72px;height:36px" aria-hidden="true"><polygon points="0,15 60,15 60,0 100,25 60,50 60,35 0,35" fill="#D2551E"/></svg>
+<div style="flex:1;background:#FBF9F4;border:3px solid #1E1D1B;border-radius:6px;padding:40px;display:flex;flex-direction:column;gap:16px">
+<p style="font-family:'Caveat', 'Brush Script MT', cursive;font-size:48px;font-weight:600;color:#B0441A;line-height:1">02</p>
+<h3 style="font-family:'Oswald', 'Arial Narrow', sans-serif;font-size:44px;font-weight:600">Storyboard</h3>
+<p style="font-size:30px;line-height:1.4;color:#55524C">Nyers vázlat, finomítás, tisztázás: elrendezés, keretezés, kifejezések.</p>
+</div>
+<svg class="xs" viewBox="0 0 100 50" preserveAspectRatio="none" style="width:72px;height:36px" aria-hidden="true"><polygon points="0,15 60,15 60,0 100,25 60,50 60,35 0,35" fill="#D2551E"/></svg>
+<div style="flex:1;background:#FBF9F4;border:3px solid #1E1D1B;border-radius:6px;padding:40px;display:flex;flex-direction:column;gap:16px">
+<p style="font-family:'Caveat', 'Brush Script MT', cursive;font-size:48px;font-weight:600;color:#B0441A;line-height:1">03</p>
+<h3 style="font-family:'Oswald', 'Arial Narrow', sans-serif;font-size:44px;font-weight:600">Animatik</h3>
+<p style="font-size:30px;line-height:1.4;color:#55524C">Az időzítés és a ritmus rögzítése, dialógusra vagy zenére vágva.</p>
+</div>
+</div>
+<p style="font-size:32px;line-height:1.45;color:#1E1D1B">Minden lépés ugyanarról szól: a döntéseket <b>olcsón, papíron</b> meghozni, mielőtt a gyártásban drágák lennének.</p>
+<div style="position:absolute;left:128px;bottom:64px;width:1664px;display:flex;flex-direction:row;justify-content:space-between"><p style="font-size:24px;color:#6E6A62">Thumbnailtől az animatikig</p><p style="font-size:24px;color:#6E6A62">02</p></div>
+
+</section>
+<section id="komplexitas-elv" data-transition="fade" style="background:#F4F1EA;color:#1E1D1B;font-family:'Public Sans', Arial, sans-serif;padding:128px 128px 160px;display:flex;flex-direction:column;gap:64px">
+<div style="display:flex;flex-direction:column;gap:16px">
+<p style="font-size:26px;font-weight:700;letter-spacing:3px;text-transform:uppercase;color:#B0441A">Előzetes gondolatok</p>
+<h2 style="font-family:'Oswald', 'Arial Narrow', sans-serif;font-size:80px;font-weight:600;line-height:1.1">Már az elején foglalkozz a komplexitással</h2>
+</div>
+<div style="display:flex;flex-direction:row;gap:32px">
+<div style="flex:1;border-top:6px solid #1E1D1B;padding:32px 0px 0px 0px;display:flex;flex-direction:column;gap:20px">
+<p style="font-family:'Oswald', 'Arial Narrow', sans-serif;font-size:72px;font-weight:600;color:#B0441A;line-height:1">1</p>
+<p style="font-size:32px;line-height:1.45">Kezeld a film <b>teljes összetettségét</b> már a tervezés legelején.</p>
+</div>
+<div style="flex:1;border-top:6px solid #1E1D1B;padding:32px 0px 0px 0px;display:flex;flex-direction:column;gap:20px">
+<p style="font-family:'Oswald', 'Arial Narrow', sans-serif;font-size:72px;font-weight:600;color:#B0441A;line-height:1">2</p>
+<p style="font-size:32px;line-height:1.45">Gondold végig, <b>miről szól</b> a filmed, és <b>hogyan</b> akarod megvalósítani.</p>
+</div>
+<div style="flex:1;border-top:6px solid #1E1D1B;padding:32px 0px 0px 0px;display:flex;flex-direction:column;gap:20px">
+<p style="font-family:'Oswald', 'Arial Narrow', sans-serif;font-size:72px;font-weight:600;color:#B0441A;line-height:1">3</p>
+<p style="font-size:32px;line-height:1.45">A gyártás során az vezeti a döntéseidet, hogy <b>hová osztod el</b> a komplexitást.</p>
+</div>
+</div>
+<div style="position:absolute;left:128px;bottom:64px;width:1664px;display:flex;flex-direction:row;justify-content:space-between"><p style="font-size:24px;color:#6E6A62">Thumbnailtől az animatikig</p><p style="font-size:24px;color:#6E6A62">03</p></div>
+
+</section>
+<section id="komplexitas-szs" data-transition="fade" style="background:#F4F1EA;color:#1E1D1B;font-family:'Public Sans', Arial, sans-serif;padding:128px 128px 160px;display:flex;flex-direction:column;gap:44px">
+<div style="display:flex;flex-direction:column;gap:16px">
+<p style="font-size:26px;font-weight:700;letter-spacing:3px;text-transform:uppercase;color:#B0441A">A film komplexitásának elosztása</p>
+<h2 style="font-family:'Oswald', 'Arial Narrow', sans-serif;font-size:80px;font-weight:600;line-height:1.1">Történet, látvány, mozgás</h2>
+</div>
+<div style="display:flex;flex-direction:row;gap:32px">
+<div style="flex:1;background:#FBF9F4;border:3px solid #1E1D1B;border-radius:6px;padding:36px;display:flex;flex-direction:column;gap:12px">
+<h3 style="font-family:'Oswald', 'Arial Narrow', sans-serif;font-size:44px;font-weight:600">Történet [T]</h3>
+<p style="font-size:28px;line-height:1.4;color:#55524C">A film szerkezete, narratívája vagy koncepciója – amit a képen megmutatsz (és amit nem).</p>
+<p style="font-size:26px;font-weight:700;color:#B0441A">Az író munkája</p>
+</div>
+<div style="flex:1;background:#FBF9F4;border:3px solid #1E1D1B;border-radius:6px;padding:36px;display:flex;flex-direction:column;gap:12px">
+<h3 style="font-family:'Oswald', 'Arial Narrow', sans-serif;font-size:44px;font-weight:600">Látvány [L]</h3>
+<p style="font-size:28px;line-height:1.4;color:#55524C">Ahogy a film kinéz: a médium, a látványtervezés, a design és a színek.</p>
+<p style="font-size:26px;font-weight:700;color:#B0441A">A képzőművész munkája</p>
+</div>
+<div style="flex:1;background:#FBF9F4;border:3px solid #1E1D1B;border-radius:6px;padding:36px;display:flex;flex-direction:column;gap:12px">
+<h3 style="font-family:'Oswald', 'Arial Narrow', sans-serif;font-size:44px;font-weight:600">Mozgás [M]</h3>
+<p style="font-size:28px;line-height:1.4;color:#55524C">Ahogy a dolgok térben és időben mozognak – naturalisztikusan vagy stilizáltan, absztraktan.</p>
+<p style="font-size:26px;font-weight:700;color:#B0441A">Az animátor munkája</p>
+</div>
+</div>
+<div style="background:#1E1D1B;color:#F4F1EA;border-radius:6px;padding:36px 56px;display:flex;flex-direction:row;align-items:center;gap:56px">
+<div style="width:700px;flex:none"><p style="font-family:'Oswald', 'Arial Narrow', sans-serif;font-size:64px;font-weight:600;white-space:nowrap">[T] + [L] + [M] = 100%</p></div>
+<div style="width:3px;height:96px;flex:none;background:#55524C"></div>
+<div style="flex:1"><p style="font-size:28px;line-height:1.4;color:#D9D3C6">A három elem összetettsége arányos egymással: az összeg nem lépheti túl a 100%-ot.</p></div>
+</div>
+<div style="position:absolute;left:128px;bottom:64px;width:1664px;display:flex;flex-direction:row;justify-content:space-between"><p style="font-size:24px;color:#6E6A62">Thumbnailtől az animatikig</p><p style="font-size:24px;color:#6E6A62">04</p></div>
+
+</section>
+<section id="komplexitas-pelda" data-transition="fade" style="background:#F4F1EA;color:#1E1D1B;font-family:'Public Sans', Arial, sans-serif;padding:128px 128px 160px;display:flex;flex-direction:column;gap:44px">
+<div style="display:flex;flex-direction:column;gap:16px">
+<p style="font-size:26px;font-weight:700;letter-spacing:3px;text-transform:uppercase;color:#B0441A">Három elosztás</p>
+<h2 style="font-family:'Oswald', 'Arial Narrow', sans-serif;font-size:80px;font-weight:600;line-height:1.1">Ahol az egyik nő, a másiknak csökkennie kell</h2>
+</div>
+<div style="display:flex;flex-direction:column;gap:36px">
+<div style="display:flex;flex-direction:column;gap:10px">
+<div style="display:flex;flex-direction:row;justify-content:space-between"><p style="font-size:30px;font-weight:700">Nagyon összetett történet → egyszerűbb látvány és mozgás</p><p style="font-size:30px;font-weight:700">= 100%</p></div>
+<div style="display:flex;flex-direction:row"><div style="width:510px;height:44px;background:#1E1D1B"></div><div style="width:136px;height:44px;background:#A39E93"></div><div style="width:34px;height:44px;background:#D2551E"></div></div>
+<p style="font-size:24px;color:#55524C">Történet 75% · Látvány 20% · Mozgás 5%</p>
+</div>
+<div style="display:flex;flex-direction:column;gap:10px">
+<div style="display:flex;flex-direction:row;justify-content:space-between"><p style="font-size:30px;font-weight:700">Összetett látvány és mozgás → egyszerű történet</p><p style="font-size:30px;font-weight:700">= 100%</p></div>
+<div style="display:flex;flex-direction:row"><div style="width:68px;height:44px;background:#1E1D1B"></div><div style="width:306px;height:44px;background:#A39E93"></div><div style="width:306px;height:44px;background:#D2551E"></div></div>
+<p style="font-size:24px;color:#55524C">Történet 10% · Látvány 45% · Mozgás 45%</p>
+</div>
+<div style="display:flex;flex-direction:column;gap:10px">
+<div style="display:flex;flex-direction:row;justify-content:space-between"><p style="font-size:30px;font-weight:700">Minden magas → nehezen készül el</p><p style="font-size:30px;font-weight:700;color:#B0441A">= 235%, túl sok</p></div>
+<div style="display:flex;flex-direction:row"><div style="width:544px;height:44px;background:#1E1D1B"></div><div style="width:442px;height:44px;background:#A39E93"></div><div style="width:612px;height:44px;background:#D2551E"></div></div>
+<p style="font-size:24px;color:#55524C">Történet 80% · Látvány 65% · Mozgás 90%</p>
+</div>
+</div>
+<div style="position:absolute;left:128px;bottom:64px;width:1664px;display:flex;flex-direction:row;justify-content:space-between"><p style="font-size:24px;color:#6E6A62">Thumbnailtől az animatikig</p><p style="font-size:24px;color:#6E6A62">05</p></div>
+
+</section>
+<section id="sec-thumb" data-transition="push" style="background:#1E1D1B;color:#F4F1EA;font-family:'Public Sans', Arial, sans-serif;padding:128px;display:flex;flex-direction:column;justify-content:center;gap:32px">
+<p style="font-family:'Oswald', 'Arial Narrow', sans-serif;font-size:200px;font-weight:600;line-height:1;color:#F08A4B">01</p>
+<h1 style="font-family:'Oswald', 'Arial Narrow', sans-serif;font-size:120px;font-weight:600;line-height:1.05;text-transform:uppercase">Kezdd thumbnailekkel</h1>
+<p style="font-size:44px;line-height:1.3;color:#D9D3C6">Laza, kicsi, gyors vázlatok – ötletek papíron, mielőtt bármit kidolgoznál.</p>
+
+</section>
+<section id="thumb-lazan" data-transition="fade" style="background:#F4F1EA;color:#1E1D1B;font-family:'Public Sans', Arial, sans-serif;padding:128px 128px 160px;display:flex;flex-direction:column;gap:56px">
+<div style="display:flex;flex-direction:column;gap:16px">
+<p style="font-size:26px;font-weight:700;letter-spacing:3px;text-transform:uppercase;color:#B0441A">Thumbnailek</p>
+<h2 style="font-family:'Oswald', 'Arial Narrow', sans-serif;font-size:80px;font-weight:600;line-height:1.1">Maradj laza</h2>
+</div>
+<div style="display:flex;flex-direction:row;gap:72px;align-items:center">
+<div style="flex:1;display:flex;flex-direction:column;gap:28px">
+<p style="font-size:32px;line-height:1.4"><b>Vizuális gyorsírás.</b> A pálcikaemberek teljesen rendben vannak.</p>
+<p style="font-size:32px;line-height:1.4"><b>Nyugodtan dobj ki</b> vagy rajzolj újra teljes szekvenciákat. Ne dolgozd túl!</p>
+<p style="font-size:32px;line-height:1.4"><b>Elsőbbség:</b> a SZEREPLŐK és a fontos TÁRGYAK.</p>
+<p style="font-size:32px;line-height:1.4"><b>Minimális háttér</b> – elég egy horizontvonal, hacsak a háttér nem kulcsfontosságú a beállításban.</p>
+</div>
+<div style="display:flex;flex-direction:column;gap:12px;align-items:center">
+<svg aria-label="Thumbnail-panel: két pálcikaember egy horizontvonal előtt, egyikük egy tárgyat nyújt" width="640" height="360" viewBox="0 0 640 360" xmlns="http://www.w3.org/2000/svg">
+<rect x="3" y="3" width="634" height="354" fill="#FBF9F4" stroke="#1E1D1B" stroke-width="6"/>
+<path d="M16 250 C160 246 420 254 624 248" fill="none" stroke="#A39E93" stroke-width="3" stroke-linecap="round"/>
+<g fill="none" stroke="#1E1D1B" stroke-width="5" stroke-linecap="round" stroke-linejoin="round">
+<circle cx="210" cy="120" r="32"/><path d="M210 152 V228 M210 228 L186 300 M210 228 L236 300 M210 176 L174 214 M210 176 L262 196"/>
+<circle cx="430" cy="128" r="32"/><path d="M430 160 V234 M430 234 L406 304 M430 234 L454 304 M430 184 L392 202 M430 184 L462 224"/>
+</g>
+<rect x="268" y="180" width="40" height="30" fill="#D2551E"/>
+</svg>
+<p style="font-family:'Caveat', 'Brush Script MT', cursive;font-size:48px;font-weight:600;color:#B0441A">Ennyi elég!</p>
+</div>
+</div>
+<div style="position:absolute;left:128px;bottom:64px;width:1664px;display:flex;flex-direction:row;justify-content:space-between"><p style="font-size:24px;color:#6E6A62">Thumbnailtől az animatikig</p><p style="font-size:24px;color:#6E6A62">07</p></div>
+
+</section>
+<section id="thumb-kicsi" data-transition="fade" style="background:#F4F1EA;color:#1E1D1B;font-family:'Public Sans', Arial, sans-serif;padding:128px 128px 160px;display:flex;flex-direction:column;gap:56px">
+<div style="display:flex;flex-direction:column;gap:16px">
+<p style="font-size:26px;font-weight:700;letter-spacing:3px;text-transform:uppercase;color:#B0441A">Thumbnailek</p>
+<h2 style="font-family:'Oswald', 'Arial Narrow', sans-serif;font-size:80px;font-weight:600;line-height:1.1">Dolgozz kicsiben és gyorsan</h2>
+</div>
+<div style="display:flex;flex-direction:row;gap:72px;align-items:center">
+<div style="flex:1;display:flex;flex-direction:column;gap:32px">
+<p style="font-size:32px;line-height:1.4"><b>Vesd papírra az ötleteket MOST</b>, és haladj tovább. Finomítani később kell.</p>
+<p style="font-size:32px;line-height:1.4">A paneleknek <b>bármilyen méretben olvashatónak</b> kell lenniük.</p>
+<p style="font-size:32px;line-height:1.4">Ha <b>thumbnailként működik</b>, a storyboardban is működni fog.</p>
+</div>
+<svg aria-label="Hat apró thumbnail-panel egy szekvenciában: totál, kettős, közeli, tárgy, reakció, mozgás" width="660" height="252" viewBox="0 0 660 252" xmlns="http://www.w3.org/2000/svg">
+<g fill="none" stroke="#1E1D1B" stroke-width="3" stroke-linecap="round" stroke-linejoin="round">
+<g transform="translate(0,0)"><rect x="2" y="2" width="200" height="112" fill="#FBF9F4" stroke-width="4"/><path d="M8 84 H196" stroke="#A39E93" stroke-width="2"/><circle cx="100" cy="62" r="7"/><path d="M100 69 V80"/></g>
+<g transform="translate(228,0)"><rect x="2" y="2" width="200" height="112" fill="#FBF9F4" stroke-width="4"/><path d="M8 92 H196" stroke="#A39E93" stroke-width="2"/><circle cx="70" cy="44" r="13"/><path d="M70 57 V96"/><circle cx="134" cy="44" r="13"/><path d="M134 57 V96"/></g>
+<g transform="translate(456,0)"><rect x="2" y="2" width="200" height="112" fill="#FBF9F4" stroke-width="4"/><circle cx="102" cy="62" r="38"/><circle cx="90" cy="56" r="5"/><circle cx="114" cy="56" r="5"/><path d="M90 80 Q102 88 114 80"/></g>
+<g transform="translate(0,136)"><rect x="2" y="2" width="200" height="112" fill="#FBF9F4" stroke-width="4"/><rect x="74" y="34" width="56" height="44" fill="#D2551E" stroke="#D2551E"/></g>
+<g transform="translate(228,136)"><rect x="2" y="2" width="200" height="112" fill="#FBF9F4" stroke-width="4"/><circle cx="102" cy="62" r="38"/><ellipse cx="88" cy="54" rx="8" ry="11"/><ellipse cx="116" cy="54" rx="8" ry="11"/><ellipse cx="102" cy="84" rx="9" ry="7"/></g>
+<g transform="translate(456,136)"><rect x="2" y="2" width="200" height="112" fill="#FBF9F4" stroke-width="4"/><path d="M8 92 H196" stroke="#A39E93" stroke-width="2"/><path d="M40 70 Q100 20 160 60" stroke="#D2551E" stroke-dasharray="8 6"/><circle cx="40" cy="74" r="8"/><path d="M40 82 V96"/></g>
+</g>
+</svg>
+</div>
+<div style="position:absolute;left:128px;bottom:64px;width:1664px;display:flex;flex-direction:row;justify-content:space-between"><p style="font-size:24px;color:#6E6A62">Thumbnailtől az animatikig</p><p style="font-size:24px;color:#6E6A62">08</p></div>
+
+</section>
+<section id="harom-c" data-transition="fade" style="background:#E9E4D8;color:#1E1D1B;font-family:'Public Sans', Arial, sans-serif;padding:128px 128px 160px;display:flex;flex-direction:column;gap:48px">
+<div style="display:flex;flex-direction:column;gap:16px">
+<p style="font-size:26px;font-weight:700;letter-spacing:3px;text-transform:uppercase;color:#B0441A">Értékelés</p>
+<h2 style="font-family:'Oswald', 'Arial Narrow', sans-serif;font-size:80px;font-weight:600;line-height:1.1">A három C</h2>
+<p style="font-size:32px;line-height:1.4;color:#55524C">Ahogy a szekvenciák thumbnailként összeállnak, ezek szerint értékeld, mennyire működnek.</p>
+</div>
+<div style="display:flex;flex-direction:row;gap:32px">
+<div style="flex:1;background:#FBF9F4;border:3px solid #1E1D1B;border-radius:6px;padding:40px;display:flex;flex-direction:column;gap:12px">
+<p style="font-family:'Oswald', 'Arial Narrow', sans-serif;font-size:140px;font-weight:700;line-height:1;color:#D2551E">C</p>
+<p style="font-size:26px;font-weight:700;letter-spacing:2px;text-transform:uppercase;color:#6E6A62">Continuity</p>
+<h3 style="font-family:'Oswald', 'Arial Narrow', sans-serif;font-size:44px;font-weight:600">Folytonosság</h3>
+<p style="font-size:28px;line-height:1.4;color:#55524C">Technikai alapok: irányok, tengely, elhelyezés.</p>
+</div>
+<div style="flex:1;background:#FBF9F4;border:3px solid #1E1D1B;border-radius:6px;padding:40px;display:flex;flex-direction:column;gap:12px">
+<p style="font-family:'Oswald', 'Arial Narrow', sans-serif;font-size:140px;font-weight:700;line-height:1;color:#D2551E">C</p>
+<p style="font-size:26px;font-weight:700;letter-spacing:2px;text-transform:uppercase;color:#6E6A62">Clarity</p>
+<h3 style="font-family:'Oswald', 'Arial Narrow', sans-serif;font-size:44px;font-weight:600">Érthetőség</h3>
+<p style="font-size:28px;line-height:1.4;color:#55524C">Olvasható beállításokból álló szekvenciák.</p>
+</div>
+<div style="flex:1;background:#FBF9F4;border:3px solid #1E1D1B;border-radius:6px;padding:40px;display:flex;flex-direction:column;gap:12px">
+<p style="font-family:'Oswald', 'Arial Narrow', sans-serif;font-size:140px;font-weight:700;line-height:1;color:#D2551E">C</p>
+<p style="font-size:26px;font-weight:700;letter-spacing:2px;text-transform:uppercase;color:#6E6A62">Cutting</p>
+<h3 style="font-family:'Oswald', 'Arial Narrow', sans-serif;font-size:44px;font-weight:600">Vágás</h3>
+<p style="font-size:28px;line-height:1.4;color:#55524C">Mit és mikor mutatsz meg – és miért.</p>
+</div>
+</div>
+<div style="position:absolute;left:128px;bottom:64px;width:1664px;display:flex;flex-direction:row;justify-content:space-between"><p style="font-size:24px;color:#6E6A62">Thumbnailtől az animatikig</p><p style="font-size:24px;color:#6E6A62">09</p></div>
+
+</section>
+<section id="folytonossag" data-transition="fade" style="background:#F4F1EA;color:#1E1D1B;font-family:'Public Sans', Arial, sans-serif;padding:128px 128px 160px;display:flex;flex-direction:column;gap:40px">
+<div style="display:flex;flex-direction:column;gap:16px">
+<p style="font-size:26px;font-weight:700;letter-spacing:3px;text-transform:uppercase;color:#B0441A">1. C – Folytonosság</p>
+<h2 style="font-family:'Oswald', 'Arial Narrow', sans-serif;font-size:80px;font-weight:600;line-height:1.1">A tengelyszabály (180°)</h2>
+</div>
+<div style="display:flex;flex-direction:row;gap:64px;align-items:flex-start">
+<div style="flex:1;display:flex;flex-direction:column;gap:32px">
+<div style="display:flex;flex-direction:row;gap:24px;align-items:flex-start">
+<p style="font-family:'Oswald', 'Arial Narrow', sans-serif;font-size:56px;font-weight:600;line-height:1;color:#D2551E">1</p>
+<div style="flex:1;display:flex;flex-direction:column;gap:8px"><h3 style="font-size:32px;font-weight:700">Cselekvési tengely</h3><p style="font-size:26px;line-height:1.4;color:#55524C">Képzeletbeli egyenes a két szereplő között, a nézésük vonalában. Az ábrán a szaggatott vonal.</p></div>
+</div>
+<div style="display:flex;flex-direction:row;gap:24px;align-items:flex-start">
+<p style="font-family:'Oswald', 'Arial Narrow', sans-serif;font-size:56px;font-weight:600;line-height:1;color:#D2551E">2</p>
+<div style="flex:1;display:flex;flex-direction:column;gap:8px"><h3 style="font-size:32px;font-weight:700">A kamera helye és iránya</h3><p style="font-size:26px;line-height:1.4;color:#55524C">A kamera a jelenet alatt végig a tengely <b>egyik oldalán</b> marad – bármelyik szögből nézhet (1–3). Így A mindig balról néz jobbra, B jobbról balra.</p></div>
+</div>
+<div style="display:flex;flex-direction:row;gap:24px;align-items:flex-start">
+<p style="font-family:'Oswald', 'Arial Narrow', sans-serif;font-size:56px;font-weight:600;line-height:1;color:#D2551E">3</p>
+<div style="flex:1;display:flex;flex-direction:column;gap:8px"><h3 style="font-size:32px;font-weight:700">A szereplők elrendezése</h3><p style="font-size:26px;line-height:1.4;color:#55524C">Hol állnak és merre mozognak a szereplők a térben. Ebből jelölöd ki a tengelyt – vágáskor egymáshoz viszonyított helyük és irányuk nem változhat.</p></div>
+</div>
+</div>
+<div style="width:860px;display:flex;flex-direction:column;gap:24px">
+<div style="position:relative;width:860px;height:360px">
+<svg aria-label="Felülnézeti ábra: A és B szereplő egymással szemben a szaggatott tengelyen; három kamera a felső, engedélyezett oldalon, látószögükkel; egy áthúzott kamera az alsó, tilos oldalon" width="860" height="360" viewBox="0 0 860 360" xmlns="http://www.w3.org/2000/svg">
+<defs><pattern id="hatch" width="18" height="18" patternUnits="userSpaceOnUse" patternTransform="rotate(45)"><path d="M0 0 V18" stroke="#D2551E" stroke-width="3" opacity="0.3"/></pattern></defs>
+<rect x="0" y="0" width="860" height="190" fill="#E9E4D8"/>
+<rect x="0" y="190" width="860" height="170" fill="url(#hatch)"/>
+<g stroke="#6E6A62" stroke-width="2" stroke-dasharray="6 6" fill="none">
+<path d="M197 73 L330 190 M197 73 L530 190"/>
+<path d="M430 80 L330 190 M430 80 L530 190"/>
+<path d="M663 73 L330 190 M663 73 L530 190"/>
+</g>
+<g stroke="#B0441A" stroke-width="2" stroke-dasharray="6 6" fill="none" opacity="0.7"><path d="M430 280 L330 190 M430 280 L530 190"/></g>
+<path d="M20 190 H840" stroke="#1E1D1B" stroke-width="4" stroke-dasharray="16 10"/>
+<circle cx="330" cy="190" r="32" fill="#D2551E"/><polygon points="360,178 384,190 360,202" fill="#D2551E"/>
+<circle cx="530" cy="190" r="32" fill="#1E1D1B"/><polygon points="500,178 476,190 500,202" fill="#1E1D1B"/>
+<g fill="#1E1D1B">
+<g transform="translate(170,60) rotate(26.6)"><rect x="-34" y="-20" width="40" height="40" rx="5"/><polygon points="6,-10 30,-20 30,20 6,10"/></g>
+<g transform="translate(430,50) rotate(90)"><rect x="-34" y="-20" width="40" height="40" rx="5"/><polygon points="6,-10 30,-20 30,20 6,10"/></g>
+<g transform="translate(690,60) rotate(153.4)"><rect x="-34" y="-20" width="40" height="40" rx="5"/><polygon points="6,-10 30,-20 30,20 6,10"/></g>
+<g transform="translate(430,310) rotate(-90)" opacity="0.55"><rect x="-34" y="-20" width="40" height="40" rx="5"/><polygon points="6,-10 30,-20 30,20 6,10"/></g>
+</g>
+<path d="M398 278 L462 342 M462 278 L398 342" stroke="#B0441A" stroke-width="7" stroke-linecap="round"/>
+</svg>
+<p style="position:absolute;left:314px;top:172px;width:32px;font-size:28px;font-weight:700;line-height:1.25;text-align:center;color:#1E1D1B">B</p>
+<p style="position:absolute;left:514px;top:172px;width:32px;font-size:28px;font-weight:700;line-height:1.25;text-align:center;color:#F4F1EA">A</p>
+<p style="position:absolute;left:92px;top:40px;width:32px;font-size:28px;font-weight:700;color:#1E1D1B">1</p>
+<p style="position:absolute;left:474px;top:28px;width:32px;font-size:28px;font-weight:700;color:#1E1D1B">2</p>
+<p style="position:absolute;left:740px;top:40px;width:32px;font-size:28px;font-weight:700;color:#1E1D1B">3</p>
+<p style="position:absolute;left:16px;top:148px;width:220px;font-size:24px;font-weight:700;color:#55524C">Engedélyezett</p>
+<p style="position:absolute;left:16px;top:318px;width:220px;font-size:24px;font-weight:700;color:#B0441A">Tilos oldal</p>
+<p style="position:absolute;left:604px;top:146px;width:240px;font-size:24px;font-weight:700;text-align:right;color:#1E1D1B">Tengely</p>
+</div>
+<div style="display:flex;flex-direction:row;gap:32px">
+<div style="flex:1;display:flex;flex-direction:row;gap:16px;align-items:center">
+<svg aria-label="Helyes kép: A a bal oldalon jobbra néz, B a jobb oldalon balra néz" width="180" height="101" viewBox="0 0 180 101" xmlns="http://www.w3.org/2000/svg"><rect x="2" y="2" width="176" height="97" fill="#FBF9F4" stroke="#1E1D1B" stroke-width="4"/><circle cx="56" cy="46" r="16" fill="#1E1D1B"/><path d="M28 99 Q56 62 84 99 Z" fill="#1E1D1B"/><polygon points="72,40 82,46 72,52" fill="#1E1D1B"/><circle cx="124" cy="46" r="16" fill="#D2551E"/><path d="M96 99 Q124 62 152 99 Z" fill="#D2551E"/><polygon points="108,40 98,46 108,52" fill="#D2551E"/></svg>
+<p style="flex:1;font-size:24px;line-height:1.35;color:#1E1D1B"><b>1–3. kamera:</b> A balra, B jobbra – a néző követi a párbeszédet.</p>
+</div>
+<div style="flex:1;display:flex;flex-direction:row;gap:16px;align-items:center">
+<svg aria-label="Hibás kép: a szereplők helyet cseréltek, B a bal, A a jobb oldalon" width="180" height="101" viewBox="0 0 180 101" xmlns="http://www.w3.org/2000/svg"><rect x="2" y="2" width="176" height="97" fill="#FBF9F4" stroke="#B0441A" stroke-width="4"/><circle cx="56" cy="46" r="16" fill="#D2551E"/><path d="M28 99 Q56 62 84 99 Z" fill="#D2551E"/><polygon points="72,40 82,46 72,52" fill="#D2551E"/><circle cx="124" cy="46" r="16" fill="#1E1D1B"/><path d="M96 99 Q124 62 152 99 Z" fill="#1E1D1B"/><polygon points="108,40 98,46 108,52" fill="#1E1D1B"/></svg>
+<p style="flex:1;font-size:24px;line-height:1.35;color:#B0441A"><b>Tilos kamera:</b> B kerül balra, A jobbra – a néző elveszíti a tájékozódást.</p>
+</div>
+</div>
+</div>
+</div>
+<div style="position:absolute;left:128px;bottom:64px;width:1664px;display:flex;flex-direction:row;justify-content:space-between"><p style="font-size:24px;color:#6E6A62">Thumbnailtől az animatikig</p><p style="font-size:24px;color:#6E6A62">10</p></div>
+
+</section>
+<section id="erthetoseg" data-transition="fade" style="background:#f4f1ea">
+  <div id="e1-1nige31" style="position:absolute; bottom:64px; left:128px; width:1664px; display:flex; flex-direction:row; justify-content:space-between">
+    <p style="font-family:'Public Sans', Arial, sans-serif; font-size:24px; color:#6e6a62">Thumbnailtől az animatikig</p>
+    <p style="font-family:'Public Sans', Arial, sans-serif; font-size:24px; color:#6e6a62">11</p>
+  </div>
+  <div id="p6e78113dcfebr0-9f8b8d65" style="position:absolute; top:128px; left:128px; width:1664px; height:141px; display:flex; flex-direction:column; gap:16px">
+    <p style="font-family:'Public Sans', Arial, sans-serif; font-size:26px; font-weight:700; letter-spacing:3px; text-transform:uppercase; color:#b0441a">2. C – Érthetőség</p>
+    <h2 style="font-family:Oswald, sans-serif; font-size:80px; font-weight:600; line-height:1.1; color:#1e1d1b">Olvasható beállításokból álló szekvenciák</h2>
+  </div>
+  <p id="p6e78113dcfebr1_0_0-9f8b8d65" style="position:absolute; top:386.41px; left:128px; width:720px; font-family:Oswald, sans-serif; font-size:96px; font-weight:600; line-height:1.05; color:#b0441a">Mi a jelenet lényege?</p>
+  <div id="p6e78113dcfebr1_1_0-9f8b8d65" style="position:absolute; top:388.41px; left:928px; width:864px; height:106px; display:flex; flex-direction:column; padding:8px 0 8px 32px; border-left:6px solid #1e1d1b">
+    <p style="font-family:'Public Sans', Arial, sans-serif; font-size:32px; line-height:1.4; color:#1e1d1b">Sűrítsd le <b>EGYETLEN beállításba</b>, amely a leghatékonyabban közvetíti a mondanivalót.</p>
+  </div>
+  <div id="p6e78113dcfebr1_1_1-9f8b8d65" style="position:absolute; top:526.41px; right:128px; width:864px; height:61px; display:flex; flex-direction:column; padding:8px 0 8px 32px; border-left:6px solid #1e1d1b">
+    <p style="font-family:'Public Sans', Arial, sans-serif; font-size:32px; line-height:1.4; color:#1e1d1b">A kompozíció legyen <b>kiegyensúlyozott és egyszerű</b>.</p>
+  </div>
+  
+</section>
+<section id="olvashatosag" data-transition="fade" style="background:#F4F1EA;color:#1E1D1B;font-family:'Public Sans', Arial, sans-serif;padding:128px 128px 160px;display:flex;flex-direction:column;gap:40px">
+<div style="display:flex;flex-direction:column;gap:16px">
+<p style="font-size:26px;font-weight:700;letter-spacing:3px;text-transform:uppercase;color:#B0441A">2. C – Érthetőség</p>
+<h2 style="font-family:'Oswald', 'Arial Narrow', sans-serif;font-size:80px;font-weight:600;line-height:1.1">Olvashatóság: egyszerű kompozíciók</h2>
+</div>
+<div style="display:grid;grid-template-columns:1fr 1fr 1fr 1fr;gap:32px">
+<div style="background:#FBF9F4;border:3px solid #1E1D1B;border-radius:6px;padding:32px;display:flex;flex-direction:column;gap:12px">
+<svg aria-label="Tónus: sötét és világos fél" width="110" height="110" viewBox="0 0 110 110" xmlns="http://www.w3.org/2000/svg"><rect x="2" y="2" width="106" height="106" fill="#FBF9F4" stroke="#1E1D1B" stroke-width="4"/><rect x="2" y="2" width="53" height="106" fill="#1E1D1B"/></svg>
+<h3 style="font-family:'Oswald', 'Arial Narrow', sans-serif;font-size:44px;font-weight:600">Tónus</h3>
+<p style="font-size:28px;line-height:1.35;color:#55524C">Világos / sötét</p>
+</div>
+<div style="background:#FBF9F4;border:3px solid #1E1D1B;border-radius:6px;padding:32px;display:flex;flex-direction:column;gap:12px">
+<svg aria-label="Tér: pozitív forma a negatív térben" width="110" height="110" viewBox="0 0 110 110" xmlns="http://www.w3.org/2000/svg"><rect x="2" y="2" width="106" height="106" fill="#E9E4D8" stroke="#1E1D1B" stroke-width="4"/><circle cx="72" cy="68" r="22" fill="#1E1D1B"/></svg>
+<h3 style="font-family:'Oswald', 'Arial Narrow', sans-serif;font-size:44px;font-weight:600">Tér</h3>
+<p style="font-size:28px;line-height:1.35;color:#55524C">Pozitív / negatív</p>
+</div>
+<div style="background:#FBF9F4;border:3px solid #1E1D1B;border-radius:6px;padding:32px;display:flex;flex-direction:column;gap:12px">
+<svg aria-label="Forma: erős póz sziluettje" width="110" height="110" viewBox="0 0 110 110" xmlns="http://www.w3.org/2000/svg"><rect x="2" y="2" width="106" height="106" fill="#FBF9F4" stroke="#1E1D1B" stroke-width="4"/><circle cx="60" cy="28" r="11" fill="#1E1D1B"/><path d="M58 40 L48 70 M48 70 L34 96 M48 70 L66 96 M56 48 L84 30 M56 48 L30 52" stroke="#1E1D1B" stroke-width="9" stroke-linecap="round" fill="none"/></svg>
+<h3 style="font-family:'Oswald', 'Arial Narrow', sans-serif;font-size:44px;font-weight:600">Forma</h3>
+<p style="font-size:28px;line-height:1.35;color:#55524C">Sziluettek, erős pózok</p>
+</div>
+<div style="background:#FBF9F4;border:3px solid #1E1D1B;border-radius:6px;padding:32px;display:flex;flex-direction:column;gap:12px">
+<svg aria-label="Lépték: nagy és kicsi forma" width="110" height="110" viewBox="0 0 110 110" xmlns="http://www.w3.org/2000/svg"><rect x="2" y="2" width="106" height="106" fill="#FBF9F4" stroke="#1E1D1B" stroke-width="4"/><circle cx="40" cy="60" r="28" fill="#1E1D1B"/><circle cx="86" cy="82" r="9" fill="#D2551E"/></svg>
+<h3 style="font-family:'Oswald', 'Arial Narrow', sans-serif;font-size:44px;font-weight:600">Lépték</h3>
+<p style="font-size:28px;line-height:1.35;color:#55524C">Nagy / kicsi</p>
+</div>
+</div>
+<div style="background:#1E1D1B;color:#F4F1EA;border-radius:6px;padding:36px 56px;display:flex;flex-direction:row;gap:56px;align-items:center">
+<div style="width:420px;flex:none"><p style="font-family:'Oswald', 'Arial Narrow', sans-serif;font-size:44px;font-weight:600;color:#F08A4B;white-space:nowrap">Hitchcock-szabály</p></div>
+<div style="width:3px;height:84px;flex:none;background:#55524C"></div>
+<div style="flex:1"><p style="font-size:30px;line-height:1.4">Egy tárgy mérete a képen feleljen meg annak, mennyire fontos a történetben az adott pillanatban.</p></div>
+</div>
+<div style="position:absolute;left:128px;bottom:64px;width:1664px;display:flex;flex-direction:row;justify-content:space-between"><p style="font-size:24px;color:#6E6A62">Thumbnailtől az animatikig</p><p style="font-size:24px;color:#6E6A62">12</p></div>
+
+</section>
+<section id="keretezes" data-transition="fade" style="background:#F4F1EA;color:#1E1D1B;font-family:'Public Sans', Arial, sans-serif;padding:128px 128px 160px;display:flex;flex-direction:column;gap:48px">
+<div style="display:flex;flex-direction:column;gap:16px">
+<p style="font-size:26px;font-weight:700;letter-spacing:3px;text-transform:uppercase;color:#B0441A">2. C – Érthetőség</p>
+<h2 style="font-family:'Oswald', 'Arial Narrow', sans-serif;font-size:80px;font-weight:600;line-height:1.1">Keretezés a boardokon</h2>
+</div>
+<div style="display:flex;flex-direction:row;gap:64px;align-items:center">
+<div style="flex:1;display:flex;flex-direction:column;gap:22px">
+<p style="font-size:30px;line-height:1.4">Figyelj a <b>képkivágásra</b>.</p>
+<p style="font-size:30px;line-height:1.4"><b>Fejtér</b> és <b>lábtér</b>.</p>
+<p style="font-size:30px;line-height:1.4"><b>Orrtér</b>: hely a nézési irány előtt.</p>
+<p style="font-size:30px;line-height:1.4">Ne vágd el a szereplőt <b>ízületeknél</b> (csípő, térd, boka).</p>
+<p style="font-size:30px;line-height:1.4"><b>Action safe</b> és <b>4:3 safe</b> terület.</p>
+</div>
+<div style="display:flex;flex-direction:column;gap:14px;width:720px">
+<svg aria-label="16:9-es keret egy szereplővel, fejtérrel, orrtérrel, action safe és 4:3 safe határokkal" width="720" height="405" viewBox="0 0 720 405" xmlns="http://www.w3.org/2000/svg">
+<rect x="3" y="3" width="714" height="399" fill="#FBF9F4" stroke="#1E1D1B" stroke-width="6"/>
+<rect x="40" y="24" width="640" height="357" fill="none" stroke="#D2551E" stroke-width="3" stroke-dasharray="14 10"/>
+<path d="M90 6 V399 M630 6 V399" stroke="#6E6A62" stroke-width="3" stroke-dasharray="3 9" stroke-linecap="round"/>
+<g fill="none" stroke="#1E1D1B" stroke-width="5" stroke-linecap="round" stroke-linejoin="round">
+<circle cx="250" cy="150" r="48"/><path d="M296 148 L314 160 L296 168"/><path d="M180 290 Q250 220 320 290 M180 290 L176 402 M320 290 L324 402"/>
+</g>
+<path d="M330 150 H560" stroke="#B0441A" stroke-width="4"/><path d="M560 150 L544 140 M560 150 L544 160" stroke="#B0441A" stroke-width="4" stroke-linecap="round"/>
+<path d="M250 30 V96" stroke="#6E6A62" stroke-width="4"/><path d="M250 30 L242 44 M250 30 L258 44 M250 96 L242 82 M250 96 L258 82" stroke="#6E6A62" stroke-width="4" stroke-linecap="round"/>
+</svg>
+<p style="font-size:24px;line-height:1.4;color:#55524C"><b>Szaggatott keret:</b> action safe · <b>pontozott vonalak:</b> 4:3 safe · <b>vízszintes nyíl:</b> orrtér · <b>függőleges nyíl:</b> fejtér</p>
+</div>
+</div>
+<div style="position:absolute;left:128px;bottom:64px;width:1664px;display:flex;flex-direction:row;justify-content:space-between"><p style="font-size:24px;color:#6E6A62">Thumbnailtől az animatikig</p><p style="font-size:24px;color:#6E6A62">13</p></div>
+
+</section>
+<section id="mozgasvonal" data-transition="fade" style="background:#E9E4D8;color:#1E1D1B;font-family:'Public Sans', Arial, sans-serif;padding:128px 128px 160px;display:flex;flex-direction:column;gap:56px">
+<div style="display:flex;flex-direction:column;gap:16px">
+<p style="font-size:26px;font-weight:700;letter-spacing:3px;text-transform:uppercase;color:#B0441A">2. C – Érthetőség</p>
+<h2 style="font-family:'Oswald', 'Arial Narrow', sans-serif;font-size:80px;font-weight:600;line-height:1.1">Mozgásvonalak</h2>
+</div>
+<div style="display:flex;flex-direction:row;gap:72px;align-items:center">
+<div style="flex:1;display:flex;flex-direction:column;gap:36px">
+<p style="font-size:44px;line-height:1.3;font-weight:600">A board panelei <span style="color:#B0441A">statikusak</span>, de a storyboard a <span style="color:#B0441A">mozgás</span> tervrajza.</p>
+<p style="font-size:32px;line-height:1.45;color:#55524C">Nem a képen lévő tárgyak formáit komponálod, hanem a <b>mozgások formáit</b>, ahogy áthaladnak a képen.</p>
+</div>
+<svg aria-label="Panel egy ugró figura íves mozgáspályájával, három fázisban" width="640" height="360" viewBox="0 0 640 360" xmlns="http://www.w3.org/2000/svg">
+<rect x="3" y="3" width="634" height="354" fill="#FBF9F4" stroke="#1E1D1B" stroke-width="6"/>
+<path d="M16 290 H624" stroke="#A39E93" stroke-width="3"/>
+<path d="M90 270 C200 40 420 40 550 270" fill="none" stroke="#D2551E" stroke-width="6" stroke-dasharray="18 12" stroke-linecap="round"/>
+<path d="M550 270 L520 252 M550 270 L548 236" stroke="#D2551E" stroke-width="6" stroke-linecap="round"/>
+<g fill="none" stroke="#1E1D1B" stroke-width="5" stroke-linecap="round" stroke-linejoin="round">
+<circle cx="90" cy="232" r="16"/><path d="M90 248 V276 M90 262 L74 252 M90 262 L106 252"/>
+<circle cx="320" cy="72" r="16" opacity="0.5"/><path d="M320 88 V116 M320 98 L298 84 M320 98 L342 84" opacity="0.5"/>
+<circle cx="550" cy="232" r="16" opacity="0.3"/><path d="M550 248 V276" opacity="0.3"/>
+</g>
+</svg>
+</div>
+<div style="position:absolute;left:128px;bottom:64px;width:1664px;display:flex;flex-direction:row;justify-content:space-between"><p style="font-size:24px;color:#6E6A62">Thumbnailtől az animatikig</p><p style="font-size:24px;color:#6E6A62">14</p></div>
+
+</section>
+<section id="vagas" data-transition="fade" style="display:flex; flex-direction:column; gap:44px; padding:128px 128px 160px; background:#f4f1ea">
+  <div style="display:flex; flex-direction:column; gap:16px">
+    <p style="font-family:'Public Sans', Arial, sans-serif; font-size:26px; font-weight:700; letter-spacing:3px; text-transform:uppercase; color:#b0441a">3. C – Vágás</p>
+    <h2 style="font-family:Oswald, sans-serif; font-size:80px; font-weight:600; line-height:1.1; color:#1e1d1b">Mit mutatsz meg, és mikor</h2>
+    <p style="font-family:'Public Sans', Arial, sans-serif; font-size:32px; line-height:1.4; color:#55524c">A beállítások megválasztása megmutatja, <b>MI</b> a fontos és <b>MIKOR</b>. A nézőt a beállítások sorrendjével vonod be.</p>
+  </div>
+  <div style="display:flex; flex-direction:row; gap:32px">
+    <div style="display:flex; flex-direction:column; gap:16px; flex:1">
+      <svg xmlns="http://www.w3.org/2000/svg" aria-label="Kettős plán: két szereplő profilból, egymás felé nézve, egyenletes térközzel" viewBox="0 0 520 293" style="width:520px; height:293px"><rect x="3" y="3" width="514" height="287" fill="#FBF9F4" stroke="#1E1D1B" stroke-width="6"/><g fill="none" stroke="#1E1D1B" stroke-width="5" stroke-linecap="round" stroke-linejoin="round"><circle cx="153" cy="125" r="34"/><path d="M187 113 L207 127 L187 139"/><path d="M93 290 C93 168 213 168 213 290"/><circle cx="367" cy="125" r="34"/><path d="M333 113 L313 127 L333 139"/><path d="M307 290 C307 168 427 168 427 290"/></g></svg>
+      <h3 style="font-family:Oswald, sans-serif; font-size:40px; font-weight:600; color:#1e1d1b">Kettős plán (two-shot)</h3>
+    </div>
+    <div style="display:flex; flex-direction:column; gap:16px; flex:1">
+      <svg xmlns="http://www.w3.org/2000/svg" aria-label="Válla fölötti beállítás: előtérben egy váll és fej hátulról, háttérben a másik szereplő" viewBox="0 0 520 293" style="width:520px; height:293px"><rect x="3" y="3" width="514" height="287" fill="#FBF9F4" stroke="#1E1D1B" stroke-width="6"/><circle cx="340" cy="120" r="36" fill="none" stroke="#1E1D1B" stroke-width="5"/><path d="M280 290 C280 164 400 164 400 290" fill="none" stroke="#1E1D1B" stroke-width="5"/><circle cx="110" cy="150" r="80" fill="#1E1D1B"/><path d="M0 290 Q110 200 240 290 Z" fill="#1E1D1B"/></svg>
+      <h3 style="font-family:Oswald, sans-serif; font-size:40px; font-weight:600; color:#1e1d1b">Válla fölötti (OTS / Ansnitt)</h3>
+    </div>
+    <div style="display:flex; flex-direction:column; gap:16px; flex:1">
+      <svg xmlns="http://www.w3.org/2000/svg" aria-label="Közeli: egy arc tölti ki a képet" viewBox="0 0 520 293" style="width:520px; height:293px"><rect x="3" y="3" width="514" height="287" fill="#FBF9F4" stroke="#1E1D1B" stroke-width="6"/><g fill="none" stroke="#1E1D1B" stroke-width="5" stroke-linecap="round"><circle cx="260" cy="150" r="118"/><ellipse cx="216" cy="128" rx="14" ry="20"/><ellipse cx="304" cy="128" rx="14" ry="20"/><path d="M214 206 Q260 234 306 206"/></g></svg>
+      <h3 style="font-family:Oswald, sans-serif; font-size:40px; font-weight:600; color:#1e1d1b">Premier plán (close-up)</h3>
+    </div>
+  </div>
+  <div style="position:absolute; bottom:64px; left:128px; width:1664px; display:flex; flex-direction:row; justify-content:space-between">
+    <p style="font-family:'Public Sans', Arial, sans-serif; font-size:24px; color:#6e6a62">Thumbnailtől az animatikig</p>
+    <p style="font-family:'Public Sans', Arial, sans-serif; font-size:24px; color:#6e6a62">15</p>
+  </div>
+  
+</section>
+<section id="vagas-ok" data-transition="fade" style="background:#F4F1EA;color:#1E1D1B;font-family:'Public Sans', Arial, sans-serif;padding:128px 128px 160px;display:flex;flex-direction:column;gap:48px">
+<div style="display:flex;flex-direction:column;gap:16px">
+<p style="font-size:26px;font-weight:700;letter-spacing:3px;text-transform:uppercase;color:#B0441A">3. C – Vágás</p>
+<h2 style="font-family:'Oswald', 'Arial Narrow', sans-serif;font-size:80px;font-weight:600;line-height:1.1">Mindig okkal vágj</h2>
+<p style="font-size:32px;line-height:1.4;color:#55524C">Minden vágás előtt kérdezd meg: <b>mit nyer vele a néző?</b></p>
+</div>
+<div style="display:flex;flex-direction:row;gap:32px">
+<div style="flex:1;background:#FBF9F4;border:3px solid #1E1D1B;border-radius:6px;padding:28px;display:flex;flex-direction:column;gap:20px">
+<div style="display:flex;flex-direction:row;gap:16px;align-items:center"><p style="font-family:'Oswald', 'Arial Narrow', sans-serif;font-size:64px;font-weight:600;line-height:1;color:#D2551E">1</p><h3 style="font-size:30px;font-weight:700;line-height:1.2">Információ feltárása</h3></div>
+<svg aria-label="Vágás előtt: a szereplő meglepetten lenéz; vágás után: közeli a földön heverő levélre" width="336" height="100" viewBox="0 0 336 100" xmlns="http://www.w3.org/2000/svg">
+<g fill="none" stroke="#1E1D1B" stroke-width="3" stroke-linecap="round">
+<rect x="2" y="8" width="146" height="84" fill="#F4F1EA"/><circle cx="75" cy="44" r="20"/><circle cx="68" cy="50" r="3"/><circle cx="82" cy="50" r="3"/><ellipse cx="75" cy="58" rx="4" ry="3"/><path d="M45 92 Q75 66 105 92"/>
+<rect x="188" y="8" width="146" height="84" fill="#F4F1EA"/><rect x="226" y="30" width="70" height="44" fill="#FBF9F4" stroke="#D2551E"/><path d="M226 30 L261 56 L296 30" stroke="#D2551E"/>
+</g>
+<path d="M162 30 L174 50 L162 70" fill="none" stroke="#D2551E" stroke-width="5" stroke-linecap="round" stroke-linejoin="round"/>
+</svg>
+<p style="font-size:26px;line-height:1.4;color:#55524C">A szereplő lenéz – vágás arra, amit lát. A néző vele együtt <b>tudja meg</b>.</p>
+</div>
+<div style="flex:1;background:#FBF9F4;border:3px solid #1E1D1B;border-radius:6px;padding:28px;display:flex;flex-direction:column;gap:20px">
+<div style="display:flex;flex-direction:row;gap:16px;align-items:center"><p style="font-family:'Oswald', 'Arial Narrow', sans-serif;font-size:64px;font-weight:600;line-height:1;color:#D2551E">2</p><h3 style="font-size:30px;font-weight:700;line-height:1.2">Ritmus, feszültség</h3></div>
+<svg aria-label="Vágás előtt: egy hosszú, nyugodt totál; vágás után: rövid beállítások gyors sora" width="336" height="100" viewBox="0 0 336 100" xmlns="http://www.w3.org/2000/svg">
+<g fill="none" stroke="#1E1D1B" stroke-width="3" stroke-linecap="round">
+<rect x="2" y="8" width="146" height="84" fill="#F4F1EA"/><path d="M8 72 H142" stroke="#A39E93"/><circle cx="75" cy="56" r="6"/><path d="M75 62 V72"/>
+<rect x="188" y="8" width="44" height="84" fill="#F4F1EA" stroke="#D2551E"/><rect x="239" y="8" width="44" height="84" fill="#F4F1EA" stroke="#D2551E"/><rect x="290" y="8" width="44" height="84" fill="#F4F1EA" stroke="#D2551E"/>
+<circle cx="210" cy="50" r="12"/><path d="M252 40 L270 60 M270 40 L252 60"/><circle cx="312" cy="50" r="5" fill="#1E1D1B"/>
+</g>
+<path d="M162 30 L174 50 L162 70" fill="none" stroke="#D2551E" stroke-width="5" stroke-linecap="round" stroke-linejoin="round"/>
+</svg>
+<p style="font-size:26px;line-height:1.4;color:#55524C">Hosszú beállítás <b>lassít</b>, sűrű, rövid vágások <b>feszítik</b> a tempót.</p>
+</div>
+<div style="flex:1;background:#FBF9F4;border:3px solid #1E1D1B;border-radius:6px;padding:28px;display:flex;flex-direction:column;gap:20px">
+<div style="display:flex;flex-direction:row;gap:16px;align-items:center"><p style="font-family:'Oswald', 'Arial Narrow', sans-serif;font-size:64px;font-weight:600;line-height:1;color:#D2551E">3</p><h3 style="font-size:30px;font-weight:700;line-height:1.2">A figyelem áthelyezése</h3></div>
+<svg aria-label="Vágás előtt: a beszélő szereplő; vágás után: a hallgató szereplő reakciója" width="336" height="100" viewBox="0 0 336 100" xmlns="http://www.w3.org/2000/svg">
+<g fill="none" stroke="#1E1D1B" stroke-width="3" stroke-linecap="round">
+<rect x="2" y="8" width="146" height="84" fill="#F4F1EA"/><circle cx="60" cy="44" r="20"/><path d="M30 92 Q60 66 90 92"/><path d="M88 34 Q104 28 112 40 M90 46 Q108 44 120 54" stroke="#A39E93"/>
+<rect x="188" y="8" width="146" height="84" fill="#F4F1EA"/><circle cx="261" cy="44" r="20" stroke="#D2551E"/><ellipse cx="254" cy="42" rx="3" ry="5" stroke="#D2551E"/><ellipse cx="268" cy="42" rx="3" ry="5" stroke="#D2551E"/><path d="M231 92 Q261 66 291 92" stroke="#D2551E"/>
+</g>
+<path d="M162 30 L174 50 L162 70" fill="none" stroke="#D2551E" stroke-width="5" stroke-linecap="round" stroke-linejoin="round"/>
+</svg>
+<p style="font-size:26px;line-height:1.4;color:#55524C">Nem a beszélőt mutatod, hanem <b>a hallgató reakcióját</b> – oda viszed a nézőt, ahol a történet zajlik.</p>
+</div>
+<div style="flex:1;background:#FBF9F4;border:3px solid #1E1D1B;border-radius:6px;padding:28px;display:flex;flex-direction:column;gap:20px">
+<div style="display:flex;flex-direction:row;gap:16px;align-items:center"><p style="font-family:'Oswald', 'Arial Narrow', sans-serif;font-size:64px;font-weight:600;line-height:1;color:#D2551E">4</p><h3 style="font-size:30px;font-weight:700;line-height:1.2">Érzelmi ütem kiemelése</h3></div>
+<svg aria-label="Vágás előtt: két szereplő kettősben; vágás után: szoros közeli egy könnyes arcra" width="336" height="100" viewBox="0 0 336 100" xmlns="http://www.w3.org/2000/svg">
+<g fill="none" stroke="#1E1D1B" stroke-width="3" stroke-linecap="round">
+<rect x="2" y="8" width="146" height="84" fill="#F4F1EA"/><circle cx="50" cy="44" r="13"/><path d="M30 92 Q50 64 70 92"/><circle cx="100" cy="44" r="13"/><path d="M80 92 Q100 64 120 92"/>
+<rect x="188" y="8" width="146" height="84" fill="#F4F1EA"/><circle cx="261" cy="56" r="42" stroke="#D2551E"/><path d="M240 46 Q248 40 256 46 M266 46 Q274 40 282 46" stroke="#D2551E"/><path d="M250 54 V64" stroke="#D2551E"/><path d="M248 80 Q261 72 274 80" stroke="#D2551E"/>
+</g>
+<path d="M162 30 L174 50 L162 70" fill="none" stroke="#D2551E" stroke-width="5" stroke-linecap="round" stroke-linejoin="round"/>
+</svg>
+<p style="font-size:26px;line-height:1.4;color:#55524C">A döntő pillanatban <b>közelebb</b> vágsz: a szűkebb kép felerősíti az érzelmet.</p>
+</div>
+</div>
+<p style="font-size:30px;line-height:1.4;color:#1E1D1B">Ha egyik ok sem áll fenn, <b style="color:#B0441A">a vágásra valószínűleg nincs szükség.</b></p>
+<div style="position:absolute;left:128px;bottom:64px;width:1664px;display:flex;flex-direction:row;justify-content:space-between"><p style="font-size:24px;color:#6E6A62">Thumbnailtől az animatikig</p><p style="font-size:24px;color:#6E6A62">16</p></div>
+
+</section>
+<section id="vagas-csucs" data-transition="fade" style="background:#F4F1EA;color:#1E1D1B;font-family:'Public Sans', Arial, sans-serif;padding:128px 128px 160px;display:flex;flex-direction:column;gap:48px">
+<div style="display:flex;flex-direction:column;gap:16px">
+<p style="font-size:26px;font-weight:700;letter-spacing:3px;text-transform:uppercase;color:#B0441A">3. C – Vágás</p>
+<h2 style="font-family:'Oswald', 'Arial Narrow', sans-serif;font-size:80px;font-weight:600;line-height:1.1">Vágj a célpont felé</h2>
+</div>
+<div style="display:flex;flex-direction:row;gap:64px">
+<p style="flex:1;font-size:32px;line-height:1.45">Nem végleges még a forgatókönyv vagy a dialógus? A jelenetet így is megrajzolhatod, ha <b>tudod, milyen pontra kell eljutnod a végén.</b></p>
+<p style="flex:1;font-size:32px;line-height:1.45;color:#55524C">Például: a szereplők egymásra adott reakcióit – <b>pózaikat és arckifejezéseiket</b> – egymásba vágva vezeted őket az érzelmi csúcspontig.</p>
+</div>
+<div style="display:flex;flex-direction:column;gap:16px">
+<svg aria-label="Öt panelből álló szekvencia: két szereplő reakcióközelijei váltakoznak, egyre közelebb, a végén a csúcspont kiemelt panelje" width="1640" height="180" viewBox="0 0 1640 180" xmlns="http://www.w3.org/2000/svg">
+<g fill="none" stroke="#1E1D1B" stroke-width="4" stroke-linecap="round">
+<g transform="translate(0,6)"><rect x="2" y="2" width="292" height="163" fill="#FBF9F4" stroke-width="5"/><circle cx="148" cy="84" r="36"/><circle cx="136" cy="78" r="4"/><circle cx="160" cy="78" r="4"/><path d="M136 102 H160"/></g>
+<g transform="translate(336,6)"><rect x="2" y="2" width="292" height="163" fill="#FBF9F4" stroke-width="5"/><circle cx="148" cy="84" r="42" stroke="#D2551E"/><circle cx="134" cy="76" r="4" stroke="#D2551E"/><circle cx="162" cy="76" r="4" stroke="#D2551E"/><path d="M135 103 H161" stroke="#D2551E"/></g>
+<g transform="translate(672,6)"><rect x="2" y="2" width="292" height="163" fill="#FBF9F4" stroke-width="5"/><circle cx="148" cy="88" r="54"/><circle cx="130" cy="80" r="5"/><circle cx="166" cy="80" r="5"/><path d="M130 110 Q150 120 167 106"/></g>
+<g transform="translate(1008,6)"><rect x="2" y="2" width="292" height="163" fill="#FBF9F4" stroke-width="5"/><circle cx="148" cy="92" r="66" stroke="#D2551E"/><circle cx="126" cy="82" r="6" stroke="#D2551E"/><circle cx="170" cy="82" r="6" stroke="#D2551E"/><path d="M124 120 Q150 134 174 114" stroke="#D2551E"/></g>
+<g transform="translate(1344,0)"><rect x="3" y="3" width="290" height="173" fill="#FBF9F4" stroke="#B0441A" stroke-width="10"/><circle cx="104" cy="96" r="44"/><path d="M84 106 Q104 136 124 106 Z"/><circle cx="92" cy="86" r="4"/><circle cx="116" cy="86" r="4"/><circle cx="196" cy="96" r="44" stroke="#D2551E"/><path d="M176 106 Q196 136 216 106 Z" stroke="#D2551E"/><circle cx="184" cy="86" r="4" stroke="#D2551E"/><circle cx="208" cy="86" r="4" stroke="#D2551E"/></g>
+</g>
+</svg>
+<div style="display:flex;flex-direction:row;gap:40px">
+<div style="width:296px;display:flex;flex-direction:column;gap:6px"><p style="font-size:24px;font-weight:700">1 · A reagál</p><p style="font-size:24px;line-height:1.35;color:#55524C">Semleges arc, távolabbról.</p></div>
+<div style="width:296px;display:flex;flex-direction:column;gap:6px"><p style="font-size:24px;font-weight:700">2 · B válaszol</p><p style="font-size:24px;line-height:1.35;color:#55524C">Semleges arc – a néző olvas bele feszültséget (Kulesov-hatás).</p></div>
+<div style="width:296px;display:flex;flex-direction:column;gap:6px"><p style="font-size:24px;font-weight:700">3 · A közelebbről</p><p style="font-size:24px;line-height:1.35;color:#55524C">Félmosoly – megtörik a jég.</p></div>
+<div style="width:296px;display:flex;flex-direction:column;gap:6px"><p style="font-size:24px;font-weight:700">4 · B még közelebbről</p><p style="font-size:24px;line-height:1.35;color:#55524C">Félmosollyal válaszol – a hangulat egymásra épül.</p></div>
+<div style="width:296px;display:flex;flex-direction:column;gap:6px"><p style="font-size:24px;font-weight:700;color:#B0441A">5 · Érzelmi csúcspont</p><p style="font-size:24px;line-height:1.35;color:#55524C">Egy képben, nyitott szájjal nevetnek: a feszültség feloldódik.</p></div>
+</div>
+</div>
+<div style="position:absolute;left:128px;bottom:64px;width:1664px;display:flex;flex-direction:row;justify-content:space-between"><p style="font-size:24px;color:#6E6A62">Thumbnailtől az animatikig</p><p style="font-size:24px;color:#6E6A62">17</p></div>
+
+</section>
+<section id="sec-board" data-transition="push" style="background:#1E1D1B;color:#F4F1EA;font-family:'Public Sans', Arial, sans-serif;padding:128px;display:flex;flex-direction:column;justify-content:center;gap:32px">
+<p style="font-family:'Oswald', 'Arial Narrow', sans-serif;font-size:200px;font-weight:600;line-height:1;color:#F08A4B">02</p>
+<h1 style="font-family:'Oswald', 'Arial Narrow', sans-serif;font-size:120px;font-weight:600;line-height:1.05;text-transform:uppercase">Építsd fel a storyboardot</h1>
+<p style="font-size:44px;line-height:1.3;color:#D9D3C6">A thumbnailekből három lépésben – egyre tisztábban, de mindig hatékonyan.</p>
+<div style="display:flex;flex-direction:row;gap:20px;align-items:center">
+<p style="font-size:32px;font-weight:700;padding:14px 28px;border:3px solid #F4F1EA;border-radius:999px">Nyers vázlat</p>
+<svg class="xs" viewBox="0 0 100 50" preserveAspectRatio="none" style="width:56px;height:28px" aria-hidden="true"><polygon points="0,15 60,15 60,0 100,25 60,50 60,35 0,35" fill="#F08A4B"/></svg>
+<p style="font-size:32px;font-weight:700;padding:14px 28px;border:3px solid #F4F1EA;border-radius:999px">Finomítás</p>
+<svg class="xs" viewBox="0 0 100 50" preserveAspectRatio="none" style="width:56px;height:28px" aria-hidden="true"><polygon points="0,15 60,15 60,0 100,25 60,50 60,35 0,35" fill="#F08A4B"/></svg>
+<p style="font-size:32px;font-weight:700;padding:14px 28px;border:3px solid #F4F1EA;border-radius:999px">Tisztázás</p>
+</div>
+
+</section>
+<section id="durva" data-transition="fade" style="background:#f4f1ea">
+  <div id="e1-rhzhy1" style="position:absolute; bottom:64px; left:128px; width:1664px; display:flex; flex-direction:row; justify-content:space-between">
+    <p style="font-family:'Public Sans', Arial, sans-serif; font-size:24px; color:#6e6a62">Thumbnailtől az animatikig</p>
+    <p style="font-family:'Public Sans', Arial, sans-serif; font-size:24px; color:#6e6a62">19</p>
+  </div>
+  <div id="p5ad0fb3f9842r0-95ec5cbc" style="position:absolute; top:128px; left:128px; width:1664px; height:141px; display:flex; flex-direction:row; align-items:end; justify-content:space-between">
+    <div style="display:flex; flex-direction:column; gap:16px">
+      <p style="font-family:'Public Sans', Arial, sans-serif; font-size:26px; font-weight:700; letter-spacing:3px; text-transform:uppercase; color:#b0441a">Storyboard</p>
+      <h2 style="font-family:Oswald, sans-serif; font-size:80px; font-weight:600; line-height:1.1; color:#1e1d1b">A nyers vázlat</h2>
+    </div>
+    <div style="display:flex; flex-direction:row; gap:12px">
+      <p style="padding:10px 22px; font-family:'Public Sans', Arial, sans-serif; font-size:24px; font-weight:700; color:#f4f1ea; background:#1e1d1b; border:3px solid #1e1d1b; border-radius:256px">1 Nyers vázlat</p>
+      <p style="padding:10px 22px; font-family:'Public Sans', Arial, sans-serif; font-size:24px; font-weight:700; color:#6e6a62; border:3px solid #a39e93; border-radius:256px">2 Finomítás</p>
+      <p style="padding:10px 22px; font-family:'Public Sans', Arial, sans-serif; font-size:24px; font-weight:700; color:#6e6a62; border:3px solid #a39e93; border-radius:256px">3 Tisztázás</p>
+    </div>
+  </div>
+  <div id="p5ad0fb3f9842r1-95ec5cbc" style="position:absolute; top:316px; left:128px; width:1664px; height:211px; display:grid; gap:64px; row-gap:28px; grid-template-columns:1fr 1fr">
+    <div style="display:flex; flex-direction:column; padding:20px 0 0; border-top:4px solid #1e1d1b">
+      <p style="font-family:'Public Sans', Arial, sans-serif; font-size:32px; line-height:1.4; color:#1e1d1b">A nyers vázlatban <b>menj végig az egészen</b>.</p>
+    </div>
+    <div style="display:flex; flex-direction:column; padding:20px 0 0; border-top:4px solid #1e1d1b">
+      <p style="font-family:'Public Sans', Arial, sans-serif; font-size:32px; line-height:1.4; color:#1e1d1b"><b>Ne dolgozd ki</b> aprólékosan a paneleket.</p>
+    </div>
+    <div style="display:flex; flex-direction:column; padding:20px 0 0; border-top:4px solid #1e1d1b">
+      <p style="font-family:'Public Sans', Arial, sans-serif; font-size:32px; line-height:1.4; color:#1e1d1b">Cél: pontosítani a <b>szereplők elrendezését és a keretezést</b>.</p>
+    </div>
+    <div style="display:flex; flex-direction:column; padding:20px 0 0; border-top:4px solid #1e1d1b">
+      <p style="font-family:'Public Sans', Arial, sans-serif; font-size:32px; line-height:1.4; color:#1e1d1b">Figyelj a szereplők <b>egymáshoz viszonyított méretére és arányaira</b>.</p>
+    </div>
+  </div>
+  <div id="p5ad0fb3f9842r2-95ec5cbc" style="position:absolute; top:718.56px; left:50%; width:1664px; height:137px; display:flex; flex-direction:row; gap:56px; align-items:center; padding:32px 56px; background:#1e1d1b; border-radius:6px; transform:translateX(-50%)">
+    <div style="width:120px; display:flex; flex-direction:column; flex:0 0 auto">
+      <p style="font-family:Caveat, 'Brush Script MT', serif; font-size:52px; font-weight:600; white-space:nowrap; color:#f08a4b">Tipp</p>
+    </div>
+    <div style="width:3px; height:64px; display:flex; flex-direction:column; flex:0 0 auto; background:#55524c">
+    </div>
+    <div style="display:flex; flex-direction:column; flex:1">
+      <p style="font-family:'Public Sans', Arial, sans-serif; font-size:30px; line-height:1.4; color:#f4f1ea">Ha egy thumbnail panel úgy, ahogy van, olvasható: nagyítsd fel, és tedd be a boardba.</p>
+    </div>
+  </div>
+  
+</section>
+<section id="finomitas" data-transition="fade" style="background:#F4F1EA;color:#1E1D1B;font-family:'Public Sans', Arial, sans-serif;padding:128px 128px 160px;display:flex;flex-direction:column;gap:56px">
+<div style="display:flex;flex-direction:row;justify-content:space-between;align-items:flex-end">
+<div style="display:flex;flex-direction:column;gap:16px">
+<p style="font-size:26px;font-weight:700;letter-spacing:3px;text-transform:uppercase;color:#B0441A">Storyboard</p>
+<h2 style="font-family:'Oswald', 'Arial Narrow', sans-serif;font-size:80px;font-weight:600;line-height:1.1">Finomítás</h2>
+</div>
+<div style="display:flex;flex-direction:row;gap:12px">
+<p style="font-size:24px;font-weight:700;padding:10px 22px;color:#6E6A62;border:3px solid #A39E93;border-radius:999px">1 Nyers vázlat</p>
+<p style="font-size:24px;font-weight:700;padding:10px 22px;background:#1E1D1B;color:#F4F1EA;border:3px solid #1E1D1B;border-radius:999px">2 Finomítás</p>
+<p style="font-size:24px;font-weight:700;padding:10px 22px;color:#6E6A62;border:3px solid #A39E93;border-radius:999px">3 Tisztázás</p>
+</div>
+</div>
+<div style="display:flex;flex-direction:row;gap:32px">
+<div style="flex:1;background:#FBF9F4;border:3px solid #1E1D1B;border-radius:6px;padding:40px;display:flex;flex-direction:column;gap:20px">
+<svg class="xi" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round" style="color:#D2551E;width:64px;height:64px" aria-hidden="true"><path d="M4 5h16v11H10l-6 4z"/></svg>
+<h3 style="font-family:'Oswald', 'Arial Narrow', sans-serif;font-size:44px;font-weight:600">Meséld el magadnak</h3>
+<p style="font-size:30px;line-height:1.4;color:#55524C">Mondd végig hangosan a szekvenciákat, mintha bemutatnád őket – így kiderül, mennyire működnek.</p>
+</div>
+<div style="flex:1;background:#FBF9F4;border:3px solid #1E1D1B;border-radius:6px;padding:40px;display:flex;flex-direction:column;gap:20px">
+<svg class="xi" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round" style="color:#D2551E;width:64px;height:64px" aria-hidden="true"><circle cx="10.5" cy="10.5" r="6.5"/><path d="M15.5 15.5L21 21"/></svg>
+<h3 style="font-family:'Oswald', 'Arial Narrow', sans-serif;font-size:44px;font-weight:600">Ellenőrizz sűrűbben</h3>
+<p style="font-size:30px;line-height:1.4;color:#55524C">Gyakrabban vizsgáld meg a három C szerint, működnek-e a szekvenciák, mint a thumbnailek idején.</p>
+</div>
+<div style="flex:1;background:#FBF9F4;border:3px solid #1E1D1B;border-radius:6px;padding:40px;display:flex;flex-direction:column;gap:20px">
+<svg class="xi" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round" style="color:#D2551E;width:64px;height:64px" aria-hidden="true"><path d="M14.5 4.5a4.5 4.5 0 0 0 5 5.9L10.6 19.3a2.1 2.1 0 0 1-3-3l8.9-8.9a4.5 4.5 0 0 0-2-2.9z"/></svg>
+<h3 style="font-family:'Oswald', 'Arial Narrow', sans-serif;font-size:44px;font-weight:600">Csiszold gördülékenyre</h3>
+<p style="font-size:30px;line-height:1.4;color:#55524C">A döcögő részeket addig javítsd és igazítsd, amíg a beállítások zökkenőmentesen nem követik egymást.</p>
+</div>
+</div>
+<div style="position:absolute;left:128px;bottom:64px;width:1664px;display:flex;flex-direction:row;justify-content:space-between"><p style="font-size:24px;color:#6E6A62">Thumbnailtől az animatikig</p><p style="font-size:24px;color:#6E6A62">20</p></div>
+
+</section>
+<section id="tisztazas" data-transition="fade" style="background:#F4F1EA;color:#1E1D1B;font-family:'Public Sans', Arial, sans-serif;padding:128px 128px 160px;display:flex;flex-direction:column;gap:48px">
+<div style="display:flex;flex-direction:row;justify-content:space-between;align-items:flex-end">
+<div style="display:flex;flex-direction:column;gap:16px">
+<p style="font-size:26px;font-weight:700;letter-spacing:3px;text-transform:uppercase;color:#B0441A">Storyboard</p>
+<h2 style="font-family:'Oswald', 'Arial Narrow', sans-serif;font-size:80px;font-weight:600;line-height:1.1">Tisztázás</h2>
+</div>
+<div style="display:flex;flex-direction:row;gap:12px">
+<p style="font-size:24px;font-weight:700;padding:10px 22px;color:#6E6A62;border:3px solid #A39E93;border-radius:999px">1 Nyers vázlat</p>
+<p style="font-size:24px;font-weight:700;padding:10px 22px;color:#6E6A62;border:3px solid #A39E93;border-radius:999px">2 Finomítás</p>
+<p style="font-size:24px;font-weight:700;padding:10px 22px;background:#1E1D1B;color:#F4F1EA;border:3px solid #1E1D1B;border-radius:999px">3 Tisztázás</p>
+</div>
+</div>
+<div style="display:flex;flex-direction:row;gap:72px;align-items:center">
+<div style="flex:1;display:flex;flex-direction:column;gap:28px">
+<p style="font-size:36px;line-height:1.35;font-weight:700">Mennyire legyen tiszta?</p>
+<p style="font-size:32px;line-height:1.4;color:#55524C">Annyira, hogy a <b>jelenet elrendezése (staging)</b> és az <b>arckifejezések (expressions)</b> egyértelműen érthetők legyenek.</p>
+<p style="font-size:32px;line-height:1.4;color:#55524C">Működik egy thumbnail panel? <b>Tartsd meg.</b></p>
+<p style="font-size:32px;line-height:1.4;color:#55524C"><b>Inkább túlozz:</b> egy extrém pózt vagy arckifejezést könnyebb visszavenni, mint egy gyengét felerősíteni.</p>
+</div>
+<div style="display:flex;flex-direction:row;gap:32px">
+<div style="display:flex;flex-direction:column;gap:14px;align-items:center">
+<svg aria-label="Gyenge, alig meglepett arckifejezés" width="300" height="300" viewBox="0 0 300 300" xmlns="http://www.w3.org/2000/svg"><rect x="3" y="3" width="294" height="294" fill="#FBF9F4" stroke="#A39E93" stroke-width="6"/><g fill="none" stroke="#6E6A62" stroke-width="6" stroke-linecap="round"><circle cx="150" cy="150" r="92"/><circle cx="120" cy="134" r="7"/><circle cx="180" cy="134" r="7"/><path d="M130 196 H170"/></g></svg>
+<p style="font-size:28px;font-weight:700;color:#6E6A62">Gyenge</p>
+</div>
+<div style="display:flex;flex-direction:column;gap:14px;align-items:center">
+<svg aria-label="Extrém, nagyon meglepett arckifejezés" width="300" height="300" viewBox="0 0 300 300" xmlns="http://www.w3.org/2000/svg"><rect x="3" y="3" width="294" height="294" fill="#FBF9F4" stroke="#1E1D1B" stroke-width="6"/><g fill="none" stroke="#1E1D1B" stroke-width="6" stroke-linecap="round"><circle cx="150" cy="156" r="100"/><ellipse cx="112" cy="128" rx="22" ry="30"/><ellipse cx="188" cy="128" rx="22" ry="30"/><path d="M90 78 Q112 56 134 72 M166 72 Q188 56 210 78"/><ellipse cx="150" cy="212" rx="30" ry="24" fill="#D2551E" stroke="#1E1D1B"/></g></svg>
+<p style="font-size:28px;font-weight:700;color:#B0441A">Extrém</p>
+</div>
+</div>
+</div>
+<div style="position:absolute;left:128px;bottom:64px;width:1664px;display:flex;flex-direction:row;justify-content:space-between"><p style="font-size:24px;color:#6E6A62">Thumbnailtől az animatikig</p><p style="font-size:24px;color:#6E6A62">21</p></div>
+
+</section>
+<section id="hatekonysag" data-transition="fade" style="background:#E9E4D8;color:#1E1D1B;font-family:'Public Sans', Arial, sans-serif;padding:128px 128px 160px;display:flex;flex-direction:column;gap:48px">
+<div style="display:flex;flex-direction:column;gap:16px">
+<p style="font-size:26px;font-weight:700;letter-spacing:3px;text-transform:uppercase;color:#B0441A">Storyboard</p>
+<h2 style="font-family:'Oswald', 'Arial Narrow', sans-serif;font-size:80px;font-weight:600;line-height:1.1">Hatékonyság</h2>
+<p style="font-size:32px;line-height:1.4;color:#55524C">Mindent, amit lerajzolsz, valakinek el is kell készítenie – valószínűleg neked.</p>
+</div>
+<div style="display:grid;grid-template-columns:1fr 1fr;gap:28px 40px">
+<div style="background:#FBF9F4;border:3px solid #1E1D1B;border-radius:6px;padding:28px 36px;display:flex;flex-direction:column;gap:12px">
+<div style="display:flex;flex-direction:row;gap:12px;align-items:center"><svg class="xi" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round" style="color:#1E1D1B;width:40px;height:40px" aria-hidden="true"><circle cx="12" cy="12" r="9"/><path d="M8 12.5l3 3 5-6"/></svg><h3 style="font-family:'Oswald', 'Arial Narrow', sans-serif;font-size:36px;font-weight:600">Érdemes</h3></div>
+<p style="font-size:28px;line-height:1.4"><b>Használd újra</b> a már elkészült elemeket (háttereket, kellékeket, figurákat), ahol csak lehet.</p>
+</div>
+<div style="background:#FBF9F4;border:3px solid #B0441A;border-radius:6px;padding:28px 36px;display:flex;flex-direction:column;gap:12px">
+<div style="display:flex;flex-direction:row;gap:12px;align-items:center"><svg class="xi" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round" style="color:#B0441A;width:40px;height:40px" aria-hidden="true"><path d="M12 3.5L2.5 20h19z"/><path d="M12 10v4.5"/><path d="M12 17.2v.3"/></svg><h3 style="font-family:'Oswald', 'Arial Narrow', sans-serif;font-size:36px;font-weight:600;color:#B0441A">Kerüld</h3></div>
+<p style="font-size:28px;line-height:1.4">Egy helyszínen minden beállításhoz új, külön hátteret tervezni – <b>ez megsokszorozza a munkát.</b></p>
+</div>
+<div style="background:#FBF9F4;border:3px solid #1E1D1B;border-radius:6px;padding:28px 36px;display:flex;flex-direction:column;gap:12px">
+<div style="display:flex;flex-direction:row;gap:12px;align-items:center"><svg class="xi" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round" style="color:#1E1D1B;width:40px;height:40px" aria-hidden="true"><circle cx="12" cy="12" r="9"/><path d="M8 12.5l3 3 5-6"/></svg><h3 style="font-family:'Oswald', 'Arial Narrow', sans-serif;font-size:36px;font-weight:600">Érdemes</h3></div>
+<p style="font-size:28px;line-height:1.4">Ugyanazt a hátteret több kameraszögből is felhasználhatod – <b>ez rendben van.</b></p>
+</div>
+<div style="background:#FBF9F4;border:3px solid #B0441A;border-radius:6px;padding:28px 36px;display:flex;flex-direction:column;gap:12px">
+<div style="display:flex;flex-direction:row;gap:12px;align-items:center"><svg class="xi" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round" style="color:#B0441A;width:40px;height:40px" aria-hidden="true"><path d="M12 3.5L2.5 20h19z"/><path d="M12 10v4.5"/><path d="M12 17.2v.3"/></svg><h3 style="font-family:'Oswald', 'Arial Narrow', sans-serif;font-size:36px;font-weight:600;color:#B0441A">Kerüld</h3></div>
+<p style="font-size:28px;line-height:1.4">Olyan elemet kidolgozni, ami végül <b>nem látszik a képen.</b></p>
+</div>
+</div>
+<div style="position:absolute;left:128px;bottom:64px;width:1664px;display:flex;flex-direction:row;justify-content:space-between"><p style="font-size:24px;color:#6E6A62">Thumbnailtől az animatikig</p><p style="font-size:24px;color:#6E6A62">22</p></div>
+
+</section>
+<section id="sec-animatik" data-transition="push" style="background:#1E1D1B;color:#F4F1EA;font-family:'Public Sans', Arial, sans-serif;padding:128px;display:flex;flex-direction:column;justify-content:center;gap:32px">
+<p style="font-family:'Oswald', 'Arial Narrow', sans-serif;font-size:200px;font-weight:600;line-height:1;color:#F08A4B">03</p>
+<h1 style="font-family:'Oswald', 'Arial Narrow', sans-serif;font-size:120px;font-weight:600;line-height:1.05;text-transform:uppercase">Időzítsd animatikkal</h1>
+<p style="font-size:44px;line-height:1.3;color:#D9D3C6">A boardpanelekből hangra vágott film – itt dől el a ritmus és a vágás.</p>
+
+</section>
+<section id="animatik-cel" data-transition="fade" style="display:flex; flex-direction:column; gap:56px; padding:128px 128px 160px; background:#f4f1ea">
+  <div style="display:flex; flex-direction:column; gap:16px">
+    <p style="font-family:'Public Sans', Arial, sans-serif; font-size:26px; font-weight:700; letter-spacing:3px; text-transform:uppercase; color:#b0441a">Animatik</p>
+    <h2 style="font-family:Oswald, sans-serif; font-size:80px; font-weight:600; line-height:1.1; color:#1e1d1b">Vágói döntések</h2>
+  </div>
+  <div style="display:flex; flex-direction:row; gap:32px">
+    <div style="display:flex; flex-direction:column; gap:20px; flex:1; padding:40px; background:#fbf9f4; border:3px solid #1e1d1b; border-radius:6px">
+      <svg class="xi" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round" style="width:64px; height:64px; color:#d2551e" aria-hidden="true"><circle cx="12" cy="12" r="9"/><path d="M12 7v5l3.5 2"/></svg>
+      <h3 style="font-family:Oswald, sans-serif; font-size:44px; font-weight:600; color:#1e1d1b">A cél</h3>
+      <p style="font-family:'Public Sans', Arial, sans-serif; font-size:30px; line-height:1.4; color:#55524c">Az animatik célja, hogy véglegesítsd az egyes mozdulatok, reakciók és vágások időzítését, valamint a jelenetek tempóját.</p>
+    </div>
+    <div style="display:flex; flex-direction:column; gap:20px; flex:1; padding:40px; background:#fbf9f4; border:3px solid #1e1d1b; border-radius:6px">
+      <svg class="xi" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round" style="width:64px; height:64px; color:#d2551e" aria-hidden="true"><path d="M12 2.8l2.8 5.8 6.3.9-4.6 4.4 1.1 6.3L12 17.2l-5.6 3 1.1-6.3L2.9 9.5l6.3-.9z"/></svg>
+      <h3 style="font-family:Oswald, sans-serif; font-size:44px; font-weight:600; color:#1e1d1b">Fontos pillanatok</h3>
+      <p style="font-family:'Public Sans', Arial, sans-serif; font-size:30px; line-height:1.4; color:#55524c">Nem szükséges minden egyes animációs pózt megrajzolni, de a jelenet hangsúlyos mozzanatait pontosan kell időzíteni.</p>
+    </div>
+    <div style="display:flex; flex-direction:column; gap:20px; flex:1; padding:40px; background:#fbf9f4; border:3px solid #1e1d1b; border-radius:6px">
+      <svg class="xi" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round" style="width:64px; height:64px; color:#d2551e" aria-hidden="true"><path d="M13 2L4 14h7l-1 8 9-12h-7z"/></svg>
+      <h3 style="font-family:Oswald, sans-serif; font-size:44px; font-weight:600; color:#1e1d1b">A vágás itt dől el</h3>
+      <p style="font-family:'Public Sans', Arial, sans-serif; font-size:30px; line-height:1.4; color:#55524c">Animációban nem készülnek olyan felvételek, amelyekből utólag lehet válogatni, ezért a vágási döntéseket már az animatik készítésekor meg kell hozni.</p>
+    </div>
+  </div>
+  <div style="position:absolute; bottom:64px; left:128px; width:1664px; display:flex; flex-direction:row; justify-content:space-between">
+    <p style="font-family:'Public Sans', Arial, sans-serif; font-size:24px; color:#6e6a62">Thumbnailtől az animatikig</p>
+    <p style="font-family:'Public Sans', Arial, sans-serif; font-size:24px; color:#6e6a62">24</p>
+  </div>
+  
+</section>
+<section id="vagas-hang" data-transition="fade" style="display:flex; flex-direction:column; gap:56px; padding:128px 128px 160px; background:#f4f1ea">
+  <div style="display:flex; flex-direction:column; gap:16px">
+    <p style="font-family:'Public Sans', Arial, sans-serif; font-size:26px; font-weight:700; letter-spacing:3px; text-transform:uppercase; color:#b0441a">Animatik</p>
+    <h2 style="font-family:Oswald, sans-serif; font-size:80px; font-weight:600; line-height:1.1; color:#1e1d1b">Vágás hangra</h2>
+  </div>
+  <div style="display:flex; flex-direction:row; gap:32px">
+    <div style="display:flex; flex-direction:column; gap:24px; flex:1; padding:48px; background:#fbf9f4; border:3px solid #1e1d1b; border-radius:6px">
+      <div style="display:flex; flex-direction:row; gap:20px; align-items:center">
+        <svg class="xi" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round" style="width:64px; height:64px; color:#d2551e" aria-hidden="true"><path d="M4 5h16v11H10l-6 4z"/></svg>
+        <h3 style="font-family:Oswald, sans-serif; font-size:44px; font-weight:600; color:#1e1d1b">Dialógusra épülő film</h3>
+      </div>
+      <p style="font-family:'Public Sans', Arial, sans-serif; font-size:32px; line-height:1.4; color:#1e1d1b">Vágj a <b>dialógushoz</b>.</p>
+      <p style="font-family:'Public Sans', Arial, sans-serif; font-size:32px; line-height:1.4; color:#55524c">Az animatikhoz ideiglenesen felvett dialógus is elegendő: akár te magad is felmondhatod a szereplők szövegét.</p>
+    </div>
+    <div style="display:flex; flex-direction:column; gap:24px; flex:1; padding:48px; background:#fbf9f4; border:3px solid #1e1d1b; border-radius:6px">
+      <div style="display:flex; flex-direction:row; gap:20px; align-items:center">
+        <svg class="xi" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round" style="width:64px; height:64px; color:#d2551e" aria-hidden="true"><circle cx="12" cy="12" r="9"/><path d="M10 8.5l5.5 3.5-5.5 3.5z"/></svg>
+        <h3 style="font-family:Oswald, sans-serif; font-size:44px; font-weight:600; color:#1e1d1b">Dialógus nélkül</h3>
+      </div>
+      <p style="font-family:'Public Sans', Arial, sans-serif; font-size:32px; line-height:1.4; color:#1e1d1b">Inkább vágj <b>zenére</b> – csendre nem lehet vágni.</p>
+      <p style="font-family:'Public Sans', Arial, sans-serif; font-size:32px; line-height:1.4; color:#55524c">Válassz vagy komponálj a jelenet érzelmi hangulatához illő zenét, és ehhez igazítsd a vágások időzítését.</p>
+    </div>
+  </div>
+  <div style="position:absolute; bottom:64px; left:128px; width:1664px; display:flex; flex-direction:row; justify-content:space-between">
+    <p style="font-family:'Public Sans', Arial, sans-serif; font-size:24px; color:#6e6a62">Thumbnailtől az animatikig</p>
+    <p style="font-family:'Public Sans', Arial, sans-serif; font-size:24px; color:#6e6a62">25</p>
+  </div>
+  
+</section>
+<section id="tippek" data-transition="fade" style="background:#e9e4d8">
+  <div id="e1-wnqk4u" style="position:absolute; bottom:64px; left:128px; width:1664px; display:flex; flex-direction:row; justify-content:space-between">
+    <p style="font-family:'Public Sans', Arial, sans-serif; font-size:24px; color:#6e6a62">Thumbnailtől az animatikig</p>
+    <p style="font-family:'Public Sans', Arial, sans-serif; font-size:24px; color:#6e6a62">26</p>
+  </div>
+  <div id="pab38a11e3f86r0-d693f424" style="position:absolute; top:128px; left:128px; width:1664px; height:141px; display:flex; flex-direction:column; gap:16px">
+    <p style="font-family:'Public Sans', Arial, sans-serif; font-size:26px; font-weight:700; letter-spacing:3px; text-transform:uppercase; color:#b0441a">Animatik</p>
+    <h2 style="font-family:Oswald, sans-serif; font-size:80px; font-weight:600; line-height:1.1; color:#1e1d1b">Hasznos időzítési tippek</h2>
+  </div>
+  <div id="pab38a11e3f86r1-d693f424" style="position:absolute; top:324px; left:128px; width:1664px; height:491px; display:flex; flex-direction:row; gap:32px">
+    <div style="display:flex; flex-direction:column; gap:16px; flex:1; padding:40px; background:#fbf9f4; border:3px solid #1e1d1b; border-radius:6px">
+      <p style="font-family:Oswald, sans-serif; font-size:120px; font-weight:600; line-height:1; color:#d2551e">16</p>
+      <h3 style="font-family:Oswald, sans-serif; font-size:40px; font-weight:600; color:#1e1d1b">képkocka minimum</h3>
+      <p style="font-family:'Public Sans', Arial, sans-serif; font-size:28px; line-height:1.4; color:#55524c">Legalább ennyi ideig kell valaminek a képen lennie, hogy a néző vizuálisan érzékelje.</p>
+    </div>
+    <div style="display:flex; flex-direction:column; gap:16px; flex:1; padding:40px; background:#fbf9f4; border:3px solid #1e1d1b; border-radius:6px">
+      <svg xmlns="http://www.w3.org/2000/svg" aria-label="Idővonal: felül képkockák sora, a harmadik után narancs vágásjel; alul a dialógus hanghulláma csak néhány képkockával a vágás után indul" viewBox="0 0 420 120" style="width:420px; height:120px">
+<g fill="#E9E4D8" stroke="#1E1D1B" stroke-width="2"><rect x="2" y="8" width="38" height="48"/><rect x="44" y="8" width="38" height="48"/><rect x="86" y="8" width="38" height="48"/></g>
+<g fill="#FBF9F4" stroke="#1E1D1B" stroke-width="2"><rect x="128" y="8" width="38" height="48"/><rect x="170" y="8" width="38" height="48"/><rect x="212" y="8" width="38" height="48"/><rect x="254" y="8" width="38" height="48"/><rect x="296" y="8" width="38" height="48"/><rect x="338" y="8" width="38" height="48"/><rect x="380" y="8" width="38" height="48"/></g>
+<path d="M8 95 H418" stroke="#A39E93" stroke-width="2"/>
+<path d="M212 87 V103 M220 79 V111 M228 83 V107 M236 75 V115 M244 85 V105 M252 77 V113 M260 81 V109 M268 89 V101 M276 79 V111 M284 83 V107 M292 87 V103 M300 79 V111 M308 83 V107 M316 75 V115 M324 85 V105 M332 77 V113 M340 81 V109 M348 89 V101 M356 79 V111 M364 83 V107 M372 87 V103 M380 79 V111 M388 83 V107 M396 75 V115 M404 85 V105 M412 77 V113" stroke="#1E1D1B" stroke-width="4" stroke-linecap="round"/>
+<path d="M126 0 V120" stroke="#D2551E" stroke-width="6"/>
+<path d="M132 72 H206 M132 66 V78 M206 66 V78" stroke="#D2551E" stroke-width="3"/>
+</svg>
+      <h3 style="font-family:Oswald, sans-serif; font-size:40px; font-weight:600; color:#1e1d1b">Ne a vágásra induljon a beszéd</h3>
+      <p style="font-family:'Public Sans', Arial, sans-serif; font-size:28px; line-height:1.4; color:#55524c">A vágás után hagyj néhány képkockányi szünetet, mert ha a beszéd a vágás pillanatában indul, az zavaróan hat.</p>
+    </div>
+    <div style="display:flex; flex-direction:column; gap:16px; flex:1; padding:40px; background:#fbf9f4; border:3px solid #1e1d1b; border-radius:6px">
+      <svg class="xi" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round" style="width:120px; height:120px; color:#d2551e" aria-hidden="true"><circle cx="12" cy="12" r="9"/><path d="M12 7v5l3.5 2"/></svg>
+      <h3 style="font-family:Oswald, sans-serif; font-size:40px; font-weight:600; color:#1e1d1b">Mérd az időt</h3>
+      <p style="font-family:'Public Sans', Arial, sans-serif; font-size:28px; line-height:1.4; color:#55524c">Játszd el a mozdulatot, és közben számolj: „ezeregy, ezerkettő…” – vagy mérd stopperrel. Így tudod meg, milyen hosszú a mozdulat és az egész beállítás.</p>
+    </div>
+  </div>
+  
+</section>
+<section id="osszegzes" data-transition="fade" style="background:#1E1D1B;color:#F4F1EA;font-family:'Public Sans', Arial, sans-serif;padding:128px 128px 160px;display:flex;flex-direction:column;gap:56px">
+<div style="display:flex;flex-direction:column;gap:16px">
+<p style="font-size:26px;font-weight:700;letter-spacing:3px;text-transform:uppercase;color:#F08A4B">Összefoglalás</p>
+<h2 style="font-family:'Oswald', 'Arial Narrow', sans-serif;font-size:80px;font-weight:600;line-height:1.1">Amit érdemes magaddal vinni</h2>
+</div>
+<div style="display:grid;grid-template-columns:1fr 1fr;gap:32px 72px">
+<div style="display:flex;flex-direction:row;gap:28px;align-items:flex-start"><p style="font-family:'Oswald', 'Arial Narrow', sans-serif;font-size:56px;font-weight:600;line-height:1;color:#F08A4B">1</p><p style="font-size:32px;line-height:1.4"><b>Oszd el tudatosan</b> a komplexitást: T + L + M = 100%.</p></div>
+<div style="display:flex;flex-direction:row;gap:28px;align-items:flex-start"><p style="font-family:'Oswald', 'Arial Narrow', sans-serif;font-size:56px;font-weight:600;line-height:1;color:#F08A4B">2</p><p style="font-size:32px;line-height:1.4"><b>Thumbnail:</b> laza, kicsi, gyors – finomítani később kell.</p></div>
+<div style="display:flex;flex-direction:row;gap:28px;align-items:flex-start"><p style="font-family:'Oswald', 'Arial Narrow', sans-serif;font-size:56px;font-weight:600;line-height:1;color:#F08A4B">3</p><p style="font-size:32px;line-height:1.4"><b>Értékelj a három C szerint:</b> folytonosság, érthetőség, vágás.</p></div>
+<div style="display:flex;flex-direction:row;gap:28px;align-items:flex-start"><p style="font-family:'Oswald', 'Arial Narrow', sans-serif;font-size:56px;font-weight:600;line-height:1;color:#F08A4B">4</p><p style="font-size:32px;line-height:1.4"><b>Storyboard három lépésben</b> (nyers vázlat, finomítás, tisztázás) – és csak azt rajzold, amit el is akarsz készíteni.</p></div>
+<div style="display:flex;flex-direction:row;gap:28px;align-items:flex-start"><p style="font-family:'Oswald', 'Arial Narrow', sans-serif;font-size:56px;font-weight:600;line-height:1;color:#F08A4B">5</p><p style="font-size:32px;line-height:1.4"><b>Animatik:</b> rögzítsd az időzítést, dialógusra vagy zenére vágva.</p></div>
+<div style="display:flex;flex-direction:row;align-items:center"><p style="font-family:'Caveat', 'Brush Script MT', cursive;font-size:56px;font-weight:600;color:#F08A4B">Ha kicsiben működik, nagyban is fog.</p></div>
+</div>
+<div style="position:absolute;left:128px;bottom:64px;width:1664px;display:flex;flex-direction:row;justify-content:space-between"><p style="font-size:24px;color:#A39E93">Thumbnailtől az animatikig</p><p style="font-size:24px;color:#A39E93">27</p></div>
+
+</section>
+</div>
+<div id="bar"><button id="prev" aria-label="Előző dia">&#8592;</button><span id="count"></span><button id="next" aria-label="Következő dia">&#8594;</button><button id="fs" aria-label="Teljes képernyő">&#9974;</button></div>
+<script>
+(function(){
+  var stage=document.getElementById('stage');
+  var s=[].slice.call(stage.querySelectorAll(':scope > section'));
+  // Sections built with only pinned children rely on being the positioning context.
+  s.forEach(function(x){ x.style.position='absolute'; });
+  var i=0;
+  function fit(){
+    var k=Math.min(innerWidth/1920, innerHeight/1080);
+    stage.style.transform='scale('+k+') translate(-50%,-50%)';
+  }
+  function show(n){
+    i=Math.max(0,Math.min(s.length-1,n));
+    s.forEach(function(x,j){ x.classList.toggle('on', j===i); });
+    document.getElementById('count').textContent=(i+1)+' / '+s.length;
+    history.replaceState(null,'','#'+(i+1));
+  }
+  addEventListener('resize',fit);
+  addEventListener('keydown',function(e){
+    if(['ArrowRight','PageDown',' ','Enter'].indexOf(e.key)>-1){ e.preventDefault(); show(i+1); }
+    else if(['ArrowLeft','PageUp','Backspace'].indexOf(e.key)>-1){ e.preventDefault(); show(i-1); }
+    else if(e.key==='Home') show(0);
+    else if(e.key==='End') show(s.length-1);
+    else if(e.key==='f'||e.key==='F') toggleFs();
+  });
+  function toggleFs(){
+    if(document.fullscreenElement) document.exitFullscreen();
+    else if(document.documentElement.requestFullscreen) document.documentElement.requestFullscreen();
+  }
+  document.getElementById('prev').onclick=function(){ show(i-1); };
+  document.getElementById('next').onclick=function(){ show(i+1); };
+  document.getElementById('fs').onclick=toggleFs;
+  stage.addEventListener('click',function(e){ show(e.clientX < innerWidth/3 ? i-1 : i+1); });
+  var tx=null;
+  addEventListener('touchstart',function(e){ tx=e.touches[0].clientX; },{passive:true});
+  addEventListener('touchend',function(e){
+    if(tx===null) return; var dx=e.changedTouches[0].clientX-tx; tx=null;
+    if(Math.abs(dx)>40) show(dx<0 ? i+1 : i-1);
+  });
+  fit();
+  var h=parseInt(location.hash.slice(1),10);
+  show(isNaN(h)?0:h-1);
+})();
+</script>
+</body>
+</html>
