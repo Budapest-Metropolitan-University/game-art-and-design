@@ -1,0 +1,61 @@
+<!doctype html>
+<html lang="hu">
+<head>
+  <meta charset="utf-8">
+  <meta name="viewport" content="width=device-width, initial-scale=1, viewport-fit=cover">
+  <meta name="theme-color" content="#111827">
+  <meta name="description" content="Game engine-ek – game jam előtti, lapozható előadás">
+  <title>Game engine-ek – game jam előtti áttekintés</title>
+  <link rel="stylesheet" href="style.css">
+</head>
+<body>
+  <main class="app" aria-label="Lapozható előadás">
+    <section class="stage" aria-live="polite">
+      <div class="slide-frame" id="slideFrame">
+        <img id="slideImage" class="slide-image" alt="" draggable="false">
+        <div id="loading" class="loading">Betöltés…</div>
+      </div>
+
+      <button class="nav-zone nav-zone--prev" id="prevZone" aria-label="Előző dia"></button>
+      <button class="nav-zone nav-zone--next" id="nextZone" aria-label="Következő dia"></button>
+    </section>
+
+    <header class="topbar">
+      <div class="brand">GAME ENGINE-EK</div>
+      <div class="top-actions">
+        <button class="icon-button" id="overviewButton" type="button" aria-label="Diaáttekintő" title="Diaáttekintő (O)">▦</button>
+        <button class="icon-button" id="linksButton" type="button" aria-label="Hivatkozások" title="Hivatkozások" hidden>↗</button>
+        <button class="icon-button" id="fullscreenButton" type="button" aria-label="Teljes képernyő" title="Teljes képernyő (F)">⛶</button>
+      </div>
+    </header>
+
+    <footer class="controls">
+      <button class="control-button" id="prevButton" type="button" aria-label="Előző dia">←</button>
+      <div class="progress-wrap">
+        <div class="counter"><span id="currentNumber">1</span> / <span id="totalNumber">12</span></div>
+        <div class="progress-track" aria-hidden="true"><div class="progress-bar" id="progressBar"></div></div>
+      </div>
+      <button class="control-button" id="nextButton" type="button" aria-label="Következő dia">→</button>
+    </footer>
+
+    <dialog class="panel" id="overviewDialog" aria-labelledby="overviewTitle">
+      <div class="panel-head">
+        <h1 id="overviewTitle">Diák</h1>
+        <button class="icon-button icon-button--dark" type="button" data-close="overviewDialog" aria-label="Bezárás">×</button>
+      </div>
+      <div class="overview-grid" id="overviewGrid"></div>
+    </dialog>
+
+    <dialog class="panel panel--links" id="linksDialog" aria-labelledby="linksTitle">
+      <div class="panel-head">
+        <h1 id="linksTitle">Hivatkozások</h1>
+        <button class="icon-button icon-button--dark" type="button" data-close="linksDialog" aria-label="Bezárás">×</button>
+      </div>
+      <div class="link-list" id="linkList"></div>
+    </dialog>
+  </main>
+
+  <noscript>Az előadás lapozásához engedélyezni kell a JavaScriptet.</noscript>
+  <script src="app.js"></script>
+</body>
+</html>
