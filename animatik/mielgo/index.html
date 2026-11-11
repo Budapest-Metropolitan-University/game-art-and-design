@@ -1,0 +1,417 @@
+<!doctype html>
+<html lang="hu">
+<head>
+<meta charset="utf-8">
+<meta name="viewport" content="width=device-width, initial-scale=1">
+<title>Alberto Mielgo animatik-technikája</title>
+<link rel="preconnect" href="https://fonts.googleapis.com">
+<link href="https://fonts.googleapis.com/css2?family=Fraunces:opsz,wght@9..144,400;9..144,700&family=Inter:wght@400;600&display=swap" rel="stylesheet">
+<style>
+  :root{
+    --bg:#121014; --panel:#1c1920; --ink:#f3ece4; --muted:#b3a99f;
+    --accent:#e8794a; --accent2:#5fb3a8; --line:#3a333f;
+  }
+  *{box-sizing:border-box;margin:0;padding:0}
+  html,body{height:100%;background:#000;color:var(--ink);font-family:Inter,system-ui,sans-serif;overflow:hidden}
+  #stage{position:fixed;inset:0;overflow:hidden}
+  #deck{width:1600px;height:900px;position:absolute;left:50%;top:50%;flex:none;transform-origin:center center;transform:translate(-50%,-50%)}
+  .slide{position:absolute;inset:0;background:var(--bg);padding:80px 110px;display:none;flex-direction:column;
+    background-image:radial-gradient(ellipse at 85% 10%,rgba(232,121,74,.16),transparent 55%),radial-gradient(ellipse at 5% 95%,rgba(95,179,168,.12),transparent 50%)}
+  .slide.active{display:flex}
+  h1,h2{font-family:Fraunces,Georgia,serif;font-weight:700;line-height:1.1}
+  h1{font-size:96px;letter-spacing:-1px}
+  h2{font-size:58px;margin-bottom:36px}
+  .kicker{color:var(--accent);font-size:22px;letter-spacing:4px;text-transform:uppercase;font-weight:600;margin-bottom:22px}
+  p,li{font-size:30px;line-height:1.45;color:var(--ink)}
+  .lead{font-size:36px;line-height:1.4;max-width:1250px;color:var(--ink)}
+  .muted{color:var(--muted)}
+  ul{list-style:none}
+  ul li{padding-left:38px;position:relative;margin-bottom:18px}
+  ul li::before{content:"";position:absolute;left:0;top:18px;width:16px;height:4px;background:var(--accent);border-radius:2px}
+  b{color:#fff}
+  .big-quote{font-family:Fraunces,Georgia,serif;font-size:62px;line-height:1.2;max-width:1300px;margin:auto 0}
+  .big-quote span{color:var(--accent)}
+  .two{display:grid;grid-template-columns:1fr 1fr;gap:60px;flex:1;min-height:0;align-items:start}
+  .slide.center{justify-content:center;padding-bottom:120px}
+  .slide.center .two{flex:none}
+  .media{display:grid;grid-template-columns:1.55fr 1fr;gap:50px;flex:1;min-height:0;align-items:start}
+  .frame{position:relative;width:100%;aspect-ratio:16/9;background:#000;border:1px solid var(--line);border-radius:10px;overflow:hidden}
+  .frame iframe{position:absolute;inset:0;width:100%;height:100%;border:0}
+  .frame .ph{position:absolute;inset:0;display:flex;align-items:center;justify-content:center;color:var(--muted);font-size:24px}
+  .open{display:inline-block;margin-top:16px;color:var(--accent2);font-size:22px;text-decoration:none}
+  .open:hover{text-decoration:underline}
+  .side p,.side li{font-size:27px}
+  .timeline{display:grid;grid-template-columns:repeat(5,1fr);gap:22px;margin-top:20px}
+  .tl{border-top:4px solid var(--accent);padding-top:20px}
+  .tl .y{font-family:Fraunces,serif;font-size:40px;color:var(--accent)}
+  .tl .t{font-size:26px;font-weight:600;margin:8px 0}
+  .tl .d{font-size:21px;color:var(--muted);line-height:1.4}
+  .flow{display:flex;align-items:stretch;gap:0;margin-top:30px}
+  .step{flex:1;background:var(--panel);border:1px solid var(--line);border-radius:12px;padding:26px 22px;position:relative}
+  .step .n{font-family:Fraunces,serif;color:var(--accent);font-size:34px}
+  .step .t{font-size:26px;font-weight:600;margin:6px 0 10px}
+  .step .d{font-size:20px;color:var(--muted);line-height:1.4}
+  .arrow{width:46px;display:flex;align-items:center;justify-content:center;color:var(--accent);font-size:34px}
+  .loop{margin-top:34px;border:2px dashed var(--accent2);border-radius:14px;padding:20px 28px;font-size:26px;color:var(--accent2)}
+  table{border-collapse:collapse;width:100%;margin-top:10px}
+  th,td{text-align:left;padding:22px 24px;border-bottom:1px solid var(--line);font-size:26px;vertical-align:top;line-height:1.4}
+  th{color:var(--accent);font-size:20px;letter-spacing:3px;text-transform:uppercase}
+  td:first-child{font-family:Fraunces,serif;font-size:30px;white-space:nowrap;width:330px}
+  .cards{display:grid;grid-template-columns:repeat(3,1fr);gap:28px}
+  .card{background:var(--panel);border:1px solid var(--line);border-radius:12px;padding:30px}
+  .card .t{font-size:28px;font-weight:600;margin-bottom:12px;color:#fff}
+  .card .d{font-size:22px;color:var(--muted);line-height:1.45}
+  .src{columns:2;column-gap:60px}
+  .src li{font-size:20px;margin-bottom:10px;break-inside:avoid}
+  .src a{color:var(--accent2);text-decoration:none}
+  .footer{position:absolute;left:110px;right:110px;bottom:34px;display:flex;justify-content:space-between;font-size:18px;color:var(--muted)}
+  #hint{position:fixed;top:12px;right:16px;font-size:13px;color:#777;font-family:Inter,sans-serif;transition:opacity .6s}
+  .linkcard{display:block;background:var(--panel);border:1px solid var(--line);border-radius:12px;padding:34px;text-decoration:none;color:var(--ink)}
+  .linkcard:hover{border-color:var(--accent)}
+  .linkcard .t{font-family:Fraunces,serif;font-size:36px;margin-bottom:10px}
+  .linkcard .d{font-size:22px;color:var(--muted)}
+</style>
+</head>
+<body>
+<div id="stage"><div id="deck">
+
+<!-- 1 -->
+<section class="slide" data-title="Cím">
+  <div style="margin:auto 0">
+    <div class="kicker">Animatik-esettanulmány</div>
+    <h1>Alberto Mielgo<br>animatik-technikája</h1>
+    <p class="lead muted" style="margin-top:40px">Hogyan lesz az animatikból a film első, teljes értékű változata</p>
+  </div>
+</section>
+
+<!-- 2 -->
+<section class="slide" data-title="Pályakép">
+  <div class="kicker">Ki ő?</div>
+  <h2>Spanyol festő, látványtervező, rendező</h2>
+  <p class="lead muted">Madrid, 1979. Photoshopban tanult meg festeni, az olajfestés csak később jött.</p>
+  <div class="timeline" style="margin-top:60px">
+    <div class="tl"><div class="y">2013</div><div class="t">Tron: Uprising</div><div class="d">Látványtervező – Emmy- és Annie-díj</div></div>
+    <div class="tl"><div class="y">2015–18</div><div class="t">Pókverzum</div><div class="d">Az első animációs próba rendezője, „vizuális tanácsadó”</div></div>
+    <div class="tl"><div class="y">2019</div><div class="t">The Witness</div><div class="d">Love, Death &amp; Robots – három Emmy, egy Annie</div></div>
+    <div class="tl"><div class="y">2021</div><div class="t">The Windshield Wiper</div><div class="d">Oscar-díj (2022); írta, rendezte, vágta, hangtervezte</div></div>
+    <div class="tl"><div class="y">2022</div><div class="t">Jibaro</div><div class="d">Love, Death &amp; Robots – Emmy-díj</div></div>
+  </div>
+</section>
+
+<!-- 3 -->
+<section class="slide" data-title="Alapgondolat">
+  <div class="kicker">Alapgondolat</div>
+  <div class="big-quote">Az animatik nem vázlat, hanem a film első változata: <span>hangulat, kompozíció és vágási ritmus</span> már itt eldől.</div>
+</section>
+
+<!-- 4 -->
+<section class="slide" data-title="Pókverzum – animatik">
+  <div class="kicker">Spider-Man: Irány a Pókverzum!</div>
+  <h2>Képi nyelvet keres, nem csak történetet</h2>
+  <div class="media">
+    <div>
+      <div class="frame"><iframe data-src="https://player.vimeo.com/video/311716775?title=0&byline=0&portrait=0" allow="autoplay; fullscreen; picture-in-picture" allowfullscreen></iframe><div class="ph">Betöltés…</div></div>
+      <a class="open" href="https://vimeo.com/311716775" target="_blank" rel="noopener">Megnyitás új lapon: vimeo.com/311716775 ↗</a>
+    </div>
+    <div class="side">
+      <ul>
+        <li>Célja a <b>képregény képi nyelvének és a filmnyelvnek az összeolvasztása</b> volt – ezt próbálta ki a storyboardon és az animatikon.</li>
+        <li>A próbából csak <b>4 beállítás</b> készült el teljesen.</li>
+        <li>A kompozíciók nagy része <b>változatlanul</b> került a kész filmbe.</li>
+        <li>Az animátoroknak a munka előtt <b>elsőként ezt vetítették le</b>.</li>
+      </ul>
+    </div>
+  </div>
+</section>
+
+<!-- 5 -->
+<section class="slide center" data-title="Három változat">
+  <div class="kicker">Hangulati változatok</div>
+  <h2>Ugyanaz a jelenet, három hangvételben</h2>
+  <p class="lead muted">Még nem dőlt el a film végső hangulata, ezért három, egymástól erősen eltérő animatikot készített – mindegyiket más ideiglenes zenével.</p>
+  <div class="cards" style="margin-top:50px">
+    <div class="card"><div class="t">1. változat</div><div class="d">Ideiglenes zene: Son Lux</div></div>
+    <div class="card"><div class="t">2. változat</div><div class="d">Ideiglenes zene: Leftfield</div></div>
+    <div class="card"><div class="t">3. változat</div><div class="d">Ideiglenes zene: Maximono</div></div>
+  </div>
+  <p class="muted" style="margin-top:40px;font-size:26px">Tanulság: a zene a tempót és a vágás ritmusát is meghatározza – ne utólag kerüljön a képre.</p>
+</section>
+
+<!-- 6 -->
+<section class="slide center" data-title="Impresszionizmus">
+  <div class="kicker">Szemlélet</div>
+  <h2>Impresszionista szabály</h2>
+  <div class="two">
+    <div>
+      <p class="lead">Csak azt kell megmutatni, amit a <b>szem egy pillantással befog</b>.</p>
+      <p class="lead muted" style="margin-top:30px">A kép gazdagnak hat, közelről viszont erősen egyszerűsített – ez a szereplőkre, a mozgásra és a színekre is érvényes.</p>
+    </div>
+    <div>
+      <ul>
+        <li>A <b>hangsúlyos mozzanatok</b> pontosak és időzítettek.</li>
+        <li>A többi csak jelzés: folt, irány, fény.</li>
+        <li>A túl sok részlet nehezen olvasható képet ad.</li>
+        <li>Az egyszerűsítés segít elkerülni a „kísérteties” hatást (uncanny valley).</li>
+      </ul>
+    </div>
+  </div>
+</section>
+
+<!-- 7 -->
+<section class="slide center" data-title="Munkamenet">
+  <div class="kicker">Munkamenet</div>
+  <h2>Egy programcsaládban, oda-vissza</h2>
+  <div class="flow">
+    <div class="step"><div class="n">1</div><div class="t">Rajz</div><div class="d">Ceruza és Photoshop</div></div>
+    <div class="arrow">→</div>
+    <div class="step"><div class="n">2</div><div class="t">Mozgatás</div><div class="d">After Effects: kameramozgás, egyszerű animáció, rétegek összeállítása</div></div>
+    <div class="arrow">→</div>
+    <div class="step"><div class="n">3</div><div class="t">Vágás</div><div class="d">Premiere: időzítés és tempó véglegesítése</div></div>
+    <div class="arrow">→</div>
+    <div class="step"><div class="n">4</div><div class="t">Hang</div><div class="d">Audition: saját felvett hangok, ideiglenes zene</div></div>
+  </div>
+  <div class="loop">↺ A vágásból bármikor visszalép a rajzhoz vagy a mozgatáshoz – maga mondja, hogy ez a körforgás a legfontosabb a munkájában.</div>
+</section>
+
+<!-- 8 -->
+<section class="slide center" data-title="Helyszín és storyboard">
+  <div class="kicker">Helyszín és storyboard</div>
+  <h2>A sorrend projektenként változik</h2>
+  <table>
+    <tr><th>Film</th><th>Sorrend</th></tr>
+    <tr><td>The Witness</td><td>Forgatókönyv → helyszínbejárás Hongkongban, a beállítások kiválasztása a helyszínen → storyboard utólag, a választott kameraállások alapján</td></tr>
+    <tr><td>Egy későbbi projekt</td><td>A COVID miatt storyboard előbb → a helyszínen kereste meg a megrajzolt beállításokat</td></tr>
+    <tr><td>The Windshield Wiper</td><td>Vegyes: hol a helyszín volt előbb, hol az ötlet, amelyhez utólag keresett festhető helyszínt</td></tr>
+  </table>
+</section>
+
+<!-- 9 -->
+<section class="slide" data-title="The Witness">
+  <div class="kicker">The Witness · Love, Death &amp; Robots, 2019</div>
+  <h2>Festett háttér, kulcskockás 3D</h2>
+  <div class="media">
+    <div>
+      <div class="frame"><iframe data-src="https://www.youtube-nocookie.com/embed/IqhXDb69wl4?rel=0" allow="autoplay; encrypted-media; fullscreen; picture-in-picture" allowfullscreen></iframe><div class="ph">Betöltés…</div></div>
+      <a class="open" href="https://www.youtube.com/watch?v=IqhXDb69wl4" target="_blank" rel="noopener">Megnyitás a YouTube-on ↗</a>
+    </div>
+    <div class="side">
+      <ul>
+        <li>Nem mozgásrögzítés, hanem <b>kulcskockás animáció</b>.</li>
+        <li>3D díszlet helyett <b>festmények</b>: a fényezők Mielgo leírása alapján illesztették a szereplőket a festett fényhez.</li>
+        <li>A kész beállításokon kézzel játszott a fényerővel, hogy a kamera „élőnek” hasson.</li>
+      </ul>
+    </div>
+  </div>
+</section>
+
+<!-- 10 -->
+<section class="slide" data-title="The Windshield Wiper">
+  <div class="kicker">The Windshield Wiper · 2021</div>
+  <h2>Hang és időzítés élő mozgásból</h2>
+  <div class="media">
+    <div>
+      <div class="frame"><iframe data-src="https://www.youtube-nocookie.com/embed/hV7-Qf0zKww?rel=0" allow="autoplay; encrypted-media; fullscreen; picture-in-picture" allowfullscreen></iframe><div class="ph">Betöltés…</div></div>
+      <a class="open" href="https://www.youtube.com/watch?v=hV7-Qf0zKww" target="_blank" rel="noopener">Megnyitás a YouTube-on ↗</a>
+    </div>
+    <div class="side">
+      <ul>
+        <li>A záródalt (Soko) már <b>hat évvel korábban</b>, a legelső storyboardok alatt is használta.</li>
+        <li>A kávéházi beszélgetésekhez <b>vacsorát rendezett</b>, és hat előre megírt kérdést tett fel.</li>
+        <li>Magát és barátait vette fel videóra; az animátoroknak ezt az időzítést kellett követniük.</li>
+        <li>Egy szereplő néha csak áll és lélegzik – és ez elég.</li>
+      </ul>
+    </div>
+  </div>
+</section>
+
+<!-- 11 -->
+<section class="slide" data-title="Jibaro – animatik">
+  <div class="kicker">Jibaro · Love, Death &amp; Robots, 2022</div>
+  <h2>Animatikrészlet</h2>
+  <div class="media">
+    <div>
+      <div class="frame"><iframe data-src="https://player.vimeo.com/video/734440460?title=0&byline=0&portrait=0" allow="autoplay; fullscreen; picture-in-picture" allowfullscreen></iframe><div class="ph">Betöltés…</div></div>
+      <a class="open" href="https://vimeo.com/734440460" target="_blank" rel="noopener">Megnyitás új lapon: vimeo.com/734440460 ↗</a>
+    </div>
+    <div class="side">
+      <p>A süket lovag és a tó szirénjének története.</p>
+      <p class="muted" style="margin-top:20px">A gyártás során használt animatik egy szakasza.</p>
+      <p style="margin-top:20px">A storyboardnak <b>„rendkívül részletesnek”</b> kellett lennie, hogy <b>minden részleg</b> megértse az egyes beállításokat.</p>
+      <p class="muted" style="margin-top:20px">Figyeljük: mennyi dől el már itt a vágásból és a beállításokból?</p>
+      <a class="open" href="https://80.lv/articles/an-animated-storyboard-for-love-death-robots-jibaro" target="_blank" rel="noopener">80 Level: An Animated Storyboard for Jibaro ↗</a>
+    </div>
+  </div>
+</section>
+
+<!-- 12 -->
+<section class="slide" data-title="Jibaro – kulisszák">
+  <div class="kicker">Jibaro · Inside the Animation (Netflix)</div>
+  <h2>A kulisszák mögött</h2>
+  <div class="media">
+    <div>
+      <div class="frame"><iframe data-src="https://www.youtube-nocookie.com/embed/JeUuk-g_Qws?rel=0" allow="autoplay; encrypted-media; fullscreen; picture-in-picture" allowfullscreen></iframe><div class="ph">Betöltés…</div></div>
+      <a class="open" href="https://www.youtube.com/watch?v=JeUuk-g_Qws" target="_blank" rel="noopener">Megnyitás a YouTube-on ↗</a>
+    </div>
+    <div class="side">
+      <ul>
+        <li>Kb. 5 perces film, Mielgo vezetésével.</li>
+        <li>Az animáció előkészítése.</li>
+        <li>A lovag és a sziréna modellezése, felülete, mozgatórendszere.</li>
+        <li>A környezet ihletői.</li>
+      </ul>
+    </div>
+  </div>
+</section>
+
+<!-- 13 -->
+<section class="slide center" data-title="Tipping Point">
+  <div class="kicker">Ráadás · Watch Dogs: Legion – Tipping Point, 2020</div>
+  <h2>Előzetes és werkfilm</h2>
+  <div class="two">
+    <a class="linkcard" href="https://musebyclios.com/gaming/watch-dogs-dystopian-game-world-springs-to-life-in-thrilling-short-film/" target="_blank" rel="noopener">
+      <div class="t">Előzetes + werkfilm ↗</div>
+      <div class="d">Muse by Clios – mindkét videó a cikkben nézhető meg</div>
+    </a>
+    <div>
+      <ul>
+        <li>Teljes egészében animáció, <b>mozgásrögzítés nélkül</b>.</li>
+        <li>Több mint <b>hat hónap</b>, kb. <b>70 fős</b> stáb.</li>
+        <li>A werkfilmben Mielgo a szereplő és a helyszín választásáról beszél.</li>
+      </ul>
+    </div>
+  </div>
+</section>
+
+<!-- 14 -->
+<section class="slide center" data-title="Marathon">
+  <div class="kicker">Legfrissebb munka · Marathon (Bungie), 2025</div>
+  <h2>8 perces bemutatkozó film – a nappaliból</h2>
+  <div class="two">
+    <div style="display:grid;gap:22px">
+      <a class="linkcard" href="https://www.cartoonbrew.com/shorts/alberto-mielgos-search-for-visual-poetry-in-marathon-cinematic-short-247345.html" target="_blank" rel="noopener">
+        <div class="t">Cartoon Brew ↗</div>
+        <div class="d">Alberto Mielgo’s Search For Visual Poetry In ‘Marathon’ (2025)</div>
+      </a>
+      <a class="linkcard" href="https://www.pcgamer.com/software/ai/marathon-cinematic-director-alberto-mielgo-says-the-8-minute-reveal-video-was-not-made-with-ai-and-frankly-he-cant-believe-he-even-has-to-say-that" target="_blank" rel="noopener">
+        <div class="t">PC Gamer ↗</div>
+        <div class="d">Mielgo: a film nem mesterséges intelligenciával készült</div>
+      </a>
+    </div>
+    <div>
+      <ul>
+        <li>A munka előtt rövid <b>treatmentet</b> írt Shelley <i>Ózümandiász</i> című verse alapján.</li>
+        <li>A művészeti irányítást, a storyboardokat és a szereplőterveket <b>„lényegében a nappalimban”</b> felügyelték.</li>
+        <li>A megjelenés után cáfolnia kellett, hogy <b>MI-vel</b> készült.</li>
+      </ul>
+      <p class="muted" style="margin-top:24px;font-size:26px">Vitaindító: miből látszik egy filmen, hogy ember rendezte meg?</p>
+    </div>
+  </div>
+</section>
+
+<!-- 15 -->
+<section class="slide center" data-title="Interjúk">
+  <div class="kicker">Mielgo saját szavaival</div>
+  <h2>Interjúk és podcastok</h2>
+  <div class="cards" style="grid-template-columns:1fr 1fr">
+    <a class="card" style="text-decoration:none" href="https://www.chaos.com/cg-garage/alberto-mielgo-director-ldrs-the-witness" target="_blank" rel="noopener"><div class="t">CG Garage (Chaos), 2020 ↗</div><div class="d">A The Witness készítése és hatásai: Tintin, Disney, Blade Runner, Rohmer. Átirattal.</div></a>
+    <a class="card" style="text-decoration:none" href="https://skwigly.co.uk/alberto-mielgo" target="_blank" rel="noopener"><div class="t">Skwigly podcast ↗</div><div class="d">The Windshield Wiper – felnőtteknek szóló animáció, szerelem és kapcsolatok.</div></a>
+    <a class="card" style="text-decoration:none" href="https://chartable.com/podcasts/animated-conversations-podcast-i/episodes/144717692-animated-conversations-sergio-jimenez-head-of-pinkmantv-talks-about-how-they-made-jibaro" target="_blank" rel="noopener"><div class="t">Animated Conversations ↗</div><div class="d">Sergio Jimenez, a Pinkman.tv vezetője a Jibaro gyártásáról.</div></a>
+    <a class="card" style="text-decoration:none" href="https://www.fondazioneprada.org/project/studio-alberto-mielgo/?lang=en" target="_blank" rel="noopener"><div class="t">Fondazione Prada, 2024 ↗</div><div class="d">Studio Alberto Mielgo – vetítés és beszélgetés Milánóban.</div></a>
+  </div>
+</section>
+
+<!-- 16 -->
+<section class="slide center" data-title="Tanulságok">
+  <div class="kicker">Tanulságok</div>
+  <h2>Az animatikban rendezd meg a filmet</h2>
+  <div class="cards">
+    <div class="card"><div class="t">Próbáld ki a hangulatot</div><div class="d">Két-három, hangvételében eltérő változat ugyanarra a jelenetre.</div></div>
+    <div class="card"><div class="t">Hang az első vágástól</div><div class="d">Ideiglenes hang és zene – ezek adják a tempót.</div></div>
+    <div class="card"><div class="t">Egyszerűsíts</div><div class="d">A hangsúlyos mozzanatokat időzítsd pontosan, a többit elég jelezni.</div></div>
+    <div class="card"><div class="t">Vegyél fel élő mozgást</div><div class="d">A saját videód megmutatja a valódi időzítést.</div></div>
+    <div class="card"><div class="t">Gyűjts helyszínt</div><div class="d">A beállításokat a valós tér alapján válaszd ki.</div></div>
+    <div class="card"><div class="t">Maradj egy munkakörben</div><div class="d">Rajz, mozgatás, vágás és hang között gyorsan oda-vissza.</div></div>
+  </div>
+</section>
+
+<!-- 15 -->
+<section class="slide" data-title="Források">
+  <div class="kicker">Források</div>
+  <h2>További olvasnivaló</h2>
+  <ul class="src">
+    <li><a href="https://beforesandafters.com/2021/12/15/sometimes-the-characters-they-are-still-and-they-basically-breathe-a-little-bit-and-thats-good-enough/" target="_blank" rel="noopener">befores &amp; afters – Q&amp;A: The Windshield Wiper (2021)</a></li>
+    <li><a href="https://beforesandafters.com/2019/05/06/director-alberto-mielgo-reveals-all-about-those-crazy-visuals-in-the-witness/" target="_blank" rel="noopener">befores &amp; afters – The Witness (2019)</a></li>
+    <li><a href="https://blog.academyart.edu/alberto-mielgos-early-storyboards-for-spiderman-into-the-spider-verse/" target="_blank" rel="noopener">Academy of Art blog – Mielgo leírása a Pókverzum-animatikokról</a></li>
+    <li><a href="https://www.cartoonbrew.com/feature-film/alberto-mielgos-early-boards-for-spider-man-into-the-spider-verse-are-truly-amazing-169521.html" target="_blank" rel="noopener">Cartoon Brew – Early Boards for Spider-Verse (2019)</a></li>
+    <li><a href="https://conceptartworld.com/news/spider-man-into-the-spider-verse-concept-art-by-alberto-mielgo/" target="_blank" rel="noopener">Concept Art World – Mielgo Pókverzum-koncepciórajzai (galéria)</a></li>
+    <li><a href="https://www.stashmedia.tv/alberto-mielgo-shares-love-death-robots-jibaro-animatic" target="_blank" rel="noopener">Stash – Jibaro animatik, állóképekkel (2022)</a></li>
+    <li><a href="https://beforesandafters.com/2022/06/09/official-behind-the-scenes-for-that-incredible-love-death-robots-short-jibaro/" target="_blank" rel="noopener">befores &amp; afters – Inside the Animation: Jibaro</a></li>
+    <li><a href="https://www.awn.com/print/animationworld/windshield-wiper-reveals-many-sides-modern-love" target="_blank" rel="noopener">AWN – The Windshield Wiper</a></li>
+    <li><a href="https://musebyclios.com/gaming/watch-dogs-dystopian-game-world-springs-to-life-in-thrilling-short-film/" target="_blank" rel="noopener">Muse by Clios – Tipping Point</a></li>
+    <li><a href="https://80.lv/articles/an-animated-storyboard-for-love-death-robots-jibaro" target="_blank" rel="noopener">80 Level – An Animated Storyboard for Jibaro (2022)</a></li>
+    <li><a href="https://www.cartoonbrew.com/shorts/alberto-mielgos-search-for-visual-poetry-in-marathon-cinematic-short-247345.html" target="_blank" rel="noopener">Cartoon Brew – Marathon (2025)</a></li>
+    <li><a href="https://www.pcgamer.com/software/ai/marathon-cinematic-director-alberto-mielgo-says-the-8-minute-reveal-video-was-not-made-with-ai-and-frankly-he-cant-believe-he-even-has-to-say-that" target="_blank" rel="noopener">PC Gamer – Marathon: nem MI-vel készült</a></li>
+    <li><a href="https://www.chaos.com/cg-garage/alberto-mielgo-director-ldrs-the-witness" target="_blank" rel="noopener">CG Garage podcast (2020)</a></li>
+    <li><a href="https://skwigly.co.uk/alberto-mielgo" target="_blank" rel="noopener">Skwigly podcast</a></li>
+    <li><a href="https://chartable.com/podcasts/animated-conversations-podcast-i/episodes/144717692-animated-conversations-sergio-jimenez-head-of-pinkmantv-talks-about-how-they-made-jibaro" target="_blank" rel="noopener">Animated Conversations – Jibaro (Pinkman.tv)</a></li>
+    <li><a href="https://www.fondazioneprada.org/project/studio-alberto-mielgo/?lang=en" target="_blank" rel="noopener">Fondazione Prada – Studio Alberto Mielgo (2024)</a></li>
+    <li><a href="https://en.wikipedia.org/wiki/Alberto_Mielgo" target="_blank" rel="noopener">Wikipedia – Alberto Mielgo</a></li>
+  </ul>
+</section>
+
+</div></div>
+<div id="hint">← → lapozás · F teljes képernyő</div>
+
+<script>
+(function(){
+  const deck=document.getElementById('deck');
+  const slides=[...document.querySelectorAll('.slide')];
+  let i=0;
+  // footer with counter
+  slides.forEach((s,n)=>{
+    if(n===0) return;
+    const f=document.createElement('div');f.className='footer';
+    f.innerHTML='<span>Alberto Mielgo animatik-technikája</span><span>'+(n+1)+' / '+slides.length+'</span>';
+    s.appendChild(f);
+  });
+  function fit(){
+    const s=Math.min(window.innerWidth/1600,window.innerHeight/900);
+    deck.style.transform='translate(-50%,-50%) scale('+s+')';
+  }
+  function show(n){
+    n=Math.max(0,Math.min(slides.length-1,n));
+    slides[i].classList.remove('active');
+    // stop videos on the slide we leave
+    slides[i].querySelectorAll('iframe').forEach(f=>{f.removeAttribute('src');const p=f.nextElementSibling;if(p)p.style.display='flex';});
+    i=n;
+    slides[i].classList.add('active');
+    slides[i].querySelectorAll('iframe[data-src]').forEach(f=>{
+      f.src=f.dataset.src;
+      f.addEventListener('load',()=>{const p=f.nextElementSibling;if(p)p.style.display='none';},{once:true});
+    });
+    try{history.replaceState(null,'','#'+(i+1));}catch(e){}
+  }
+  document.addEventListener('keydown',e=>{
+    if(['ArrowRight','PageDown',' ','Enter'].includes(e.key)){e.preventDefault();show(i+1);}
+    else if(['ArrowLeft','PageUp','Backspace'].includes(e.key)){e.preventDefault();show(i-1);}
+    else if(e.key==='Home'){show(0);}
+    else if(e.key==='End'){show(slides.length-1);}
+    else if(e.key==='f'||e.key==='F'){
+      if(!document.fullscreenElement){document.documentElement.requestFullscreen&&document.documentElement.requestFullscreen();}
+      else{document.exitFullscreen&&document.exitFullscreen();}
+    }
+  });
+  document.addEventListener('click',e=>{
+    if(e.target.closest('a,iframe,.frame')) return;
+    if(e.clientX>window.innerWidth/2) show(i+1); else show(i-1);
+  });
+  window.addEventListener('resize',fit);
+  fit();
+  const start=parseInt((location.hash||'#1').slice(1),10);
+  slides[0].classList.add('active');
+  show(isNaN(start)?0:start-1);
+  setTimeout(()=>{document.getElementById('hint').style.opacity='0';},4000);
+})();
+</script>
+</body>
+</html>
